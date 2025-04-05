@@ -4,6 +4,8 @@ import (
 	"CashCraft/model"
 
 	"github.com/gofiber/fiber/v2"
+	//"strconv"
+	"fmt"
 )
 
 func SetupHomeRoutes(app *fiber.App) {
@@ -16,5 +18,10 @@ func GetHome(c *fiber.Ctx) error {
 		return c.Redirect("/login")
 	}
 
-	return c.Render("./view/home/index.html", fiber.Map{})
+//	bal := fmt.Sprintf("$%s", strconv.FormatInt(int64(user.Cash), 10))
+	bal := fmt.Sprintf("$%.2f", user.Cash)
+
+	return c.Render("./view/home/index.html", fiber.Map{
+		"Balance": bal,
+	})
 }
