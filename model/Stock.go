@@ -29,7 +29,7 @@ type Stock struct {
 	Symbol string
 	Amount float64 `json:"amount"`
 	UserID int     // foreign key GORM requirement
-	User   User    // foreign key GORM requirement
+	User   User    `gorm:"foreignKey:UserID"`
 }
 
 func SetupStocks() []StockPrice {
@@ -51,11 +51,7 @@ func SetupStocks() []StockPrice {
 	u := User{}
 	DB.First(&u, "username = ?", "test")
 
-	s := Stock{}
-	s.Symbol = "AAPL"
-	s.Amount = 0
-
-	s.Buy(u, 1000)
+	u.Buy("AAPL", 1000)
 
 	fmt.Println(u.ValuateStocks())
 
@@ -91,31 +87,4 @@ func (s *StockPrice) UpdatePrice() error {
 
 	s.Value = quote.CurrentPrice
 	return nil
-}
-
-func (s *Stock) Buy(user User, dollarAmount float64) error {
-	sp := StockPrice{}
-	if err := DB.First(&sp, "symbol = ?", s.Symbol).Error; err != nil {
-		fmt.Printf("Trying to buy unknown stock.\n")
-		return err
-	}
-
-	user.Cash -= dollarAmount
-	s.Amount += dollarAmount / sp.Value
-
-	if !user.HasStock(s.Symbol) {
-		s.UserID = user.ID
-		user.Stocks = append(user.Stocks, *s)
-		DB.Save(&user)
-		DB.Create(&s)
-	} else {
-		DB.Update("stocks", &s)
-	}
-
-	return nil
-}
-
-func (s *Stock) Sell(user User, stockAmount float64) {
-	s.Amount -= stockAmount
-	user.Cash += stockAmount * s.Amount
 }

@@ -2,17 +2,18 @@ package model
 
 import (
 	"fmt"
+	"errors"
 
 	"github.com/jinzhu/gorm"
 )
 
 type User struct {
 	gorm.Model
-	ID           int     `json:"userid"`
+	ID           int     `gorm:"primaryKey"`
 	Username     string  `json:"username"`
 	Password     string  `json:"password"`
 	Cash         float64 `json:"cash"`
-	Stocks       []Stock `json:"stocks"`
+	Stocks       []Stock `gorm:"many2many;stocks;"`
 	SessionToken string  `json:"session_token"`
 }
 
@@ -34,14 +35,14 @@ func (u *User) ValuateStocks() float64 {
 	return value
 }
 
-func (u *User) HasStock(symbol string) bool {
+func (u *User) GetStock(symbol string) (Stock, error) {
 	for _, stock := range u.Stocks {
 		if stock.Symbol == symbol {
-			return true
+			return stock, nil
 		}
 	}
 
-	return false
+	return Stock{}, errors.New("no stock exists")
 }
 
 func (u *User) Buy(stockSymbol string, dollars float64) error {
@@ -53,22 +54,24 @@ func (u *User) Buy(stockSymbol string, dollars float64) error {
 
 	u.Cash -= dollars
 
-	if !u.HasStock(stockSymbol) {
-
-		return nil
+	stock, stockErr := u.GetStock(stockSymbol)
+	if stockErr != nil {
+		stock := Stock{}
+		stock.Symbol = stockSymbol
+		stock.Amount = 0
+		stock.UserID = u.ID
 	}
 
-	// user.Cash -= dollars
-	// s.Amount += dollars / sp.Value
+	stock.Amount += dollars / sp.Value
 
-	// if !user.HasStock(s.Symbol) {
-	// 	s.UserID = user.ID
-	// 	user.Stocks = append(user.Stocks, *s)
-	// 	DB.Save(&user)
-	// 	DB.Create(&s)
-	// } else {
-	// 	DB.Update("stocks", &s)
-	// }
+	u.Stocks = append(u.Stocks, stock)
 
-	// return nil
+	DB.Save(&u)
+	if stockErr == nil {
+		DB.Save(&stock)
+	} else {
+		DB.Create(&stock)
+	}
+
+	return nil
 }
