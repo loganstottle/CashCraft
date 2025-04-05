@@ -22,6 +22,8 @@ func main() {
 		return c.SendString(c.Params("skibidi"))
 	})
 
+	app.Static("/login", "./views/login")
+
 	name := "pizza"
 	fmt.Printf("Hi %s", name)
 	fmt.Printf("about to listen")
