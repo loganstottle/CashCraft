@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -12,5 +13,6 @@ func main() {
 		log.Fatal("Could not load .env")
 	}
 
-	LogCurrentPrice(os.Getenv("FINNHUB_API_KEY"), "AAPL")
+	price := GetCurrentPrice(os.Getenv("FINNHUB_API_KEY"), "GOOG")
+	fmt.Println(price)
 }
