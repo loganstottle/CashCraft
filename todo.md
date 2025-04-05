@@ -5,4 +5,6 @@ Stock events and rounds
 stock ownership
 calc value
 friends
+leagues with seperate balances
+leaderboards
 etc.
