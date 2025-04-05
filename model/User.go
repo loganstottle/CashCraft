@@ -43,3 +43,32 @@ func (u *User) HasStock(symbol string) bool {
 
 	return false
 }
+
+func (u *User) Buy(stockSymbol string, dollars float64) error {
+	sp := StockPrice{}
+	if err := DB.First(&sp, "symbol = ?", stockSymbol).Error; err != nil {
+		fmt.Printf("Trying to buy unknown stock.\n")
+		return err
+	}
+
+	u.Cash -= dollars
+
+	if !u.HasStock(stockSymbol) {
+
+		return nil
+	}
+
+	// user.Cash -= dollars
+	// s.Amount += dollars / sp.Value
+
+	// if !user.HasStock(s.Symbol) {
+	// 	s.UserID = user.ID
+	// 	user.Stocks = append(user.Stocks, *s)
+	// 	DB.Save(&user)
+	// 	DB.Create(&s)
+	// } else {
+	// 	DB.Update("stocks", &s)
+	// }
+
+	// return nil
+}
