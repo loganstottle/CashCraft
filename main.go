@@ -12,5 +12,5 @@ func main() {
 		log.Fatal("Could not load .env")
 	}
 
-	TestFinance(os.Getenv("POLYGON_API_KEY"))
+	LogCurrentPrice(os.Getenv("FINNHUB_API_KEY"), "AAPL")
 }
