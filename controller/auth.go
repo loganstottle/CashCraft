@@ -113,6 +113,7 @@ func LogoutHandler(c *fiber.Ctx) error {
 	sessionToken := c.Cookies("session_token")
 	model.DB.Model(&model.User{}).Where("session_token = ?", sessionToken).Update("session_token", nil)
 
+	c.ClearCookie("username")
 	c.ClearCookie("session_token")
 	return c.JSON(fiber.Map{"message": "Logged out"})
 }
