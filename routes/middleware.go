@@ -1,8 +1,7 @@
 package routes
 
 import (
-	"your-app/db"
-	"your-app/models"
+    "github.com/loganstottle/CashCraft/model"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -13,8 +12,8 @@ func authMiddleware(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Unauthorized"})
 	}
 
-	var user models.User
-	if err := db.DB.First(&user, "session_token = ?", sessionToken).Error; err != nil {
+	var user model.User
+	if err := model.DB.First(&user, "session_token = ?", sessionToken).Error; err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid session"})
 	}
 
