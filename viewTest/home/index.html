@@ -2,16 +2,12 @@
 <html>
     <head>
         <title>CashCraft Home</title>
-        <link rel="icon" type="image/png" href="../view/logo.png"/>
+        <link rel="icon" type="image/png" href="../view/logo.png" />
 
         <style>
             #grad1 {
                 background-image: linear-gradient(#282828, #5e5e5e);
                 color: white;
-            }
-
-            #grad2 {
-                background-image: linear-gradient()
             }
 
             * {
@@ -87,6 +83,35 @@
                 transform: scale(1.1);
             }
         </style>
+        <script
+            type="text/javascript"
+            src="https://www.gstatic.com/charts/loader.js"
+        ></script>
+        <script type="text/javascript">
+            google.charts.load("current", { packages: ["corechart"] });
+            google.charts.setOnLoadCallback(drawChart);
+            function drawChart() {
+                var data = google.visualization.arrayToDataTable([
+                    ["Stock", "Value Ownder"],
+                    ["AMZN", 23342.12],
+                    ["APPL", 17323.69],
+                    ["TSLA", 2876.44],
+                    ["Cash", 61766.98],
+                ]);
+
+                var options = {
+                    title: "Stocks Owned",
+                    backgroundColor: "transparent",
+                    // "transparent",
+                    is3D: true,
+                };
+
+                var chart = new google.visualization.PieChart(
+                    document.getElementById("piechart_3d"),
+                );
+                chart.draw(data, options);
+            }
+        </script>
     </head>
     <body>
         <div class="mainbox">
@@ -96,11 +121,31 @@
                 <div class="balvalbar">107k value, 3k balaance</div>
                 <div class="stockview">
                     <div class="stocksplit">
-                        <div class="piDiv">pie chart for whats owned</div>
+                        <div class="piDiv">
+                            <div
+                                id="piechart_3d"
+                                style="width: 100%; height: 100%"
+                            ></div>
+                        </div>
                         <button class="buySellButton">Buy & Sell</button>
                     </div>
                     <div class="stocksplit">
-                        <div class="stockChart">chart of stock cost</div>>
+                        <div class="stockChart">
+                            <iframe
+                                referrerpolicy="origin"
+                                width="100%"
+                                height="75%"
+                                style="
+                                    background: #ffffff;
+                                    padding: 10px;
+                                    border: none;
+                                    border-radius: 5px;
+                                    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+                                "
+                                src="https://jika.io/embed/area-chart?symbol=AAPL&selection=one_year&closeKey=close&boxShadow=true&graphColor=1652f0&textColor=161c2d&backgroundColor=FFFFFF&fontFamily=Nunito&"
+                            ></iframe>
+                        </div>
+                        >
                     </div>
                 </div>
             </div>
