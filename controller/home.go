@@ -46,8 +46,9 @@ func GetHome(c *fiber.Ctx) error {
 	}
 
 	return c.Render("./view/home/index.html", fiber.Map{
-		"Username":   user.Username,
-		"Balance":    FormatBalance(user.Cash),
-		"StocksData": stocksData,
+		"Username":       user.Username,
+		"Balance":        FormatBalance(user.Cash),
+		"StockValuation": user.ValuateStocks(),
+		"StocksData":     stocksData,
 	})
 }

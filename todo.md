@@ -1,10 +1,10 @@
 done:
  - fetch real time stock price
+ - web server with templates
+ - logins
 
 todo:
- - web server (various routes; templates (NATE))
- - database (logins, balance and stock ownership)
- - display stock info (buy/sell, price graph)
+ - buy/sell stocks, graphs
  - friends, leagues, etc
  - leaderboard
  - nice styling
