@@ -3,8 +3,9 @@ package model
 import (
 	"fmt"
 	"os"
+	"encoding/hex"
 
-	"golang.org/x/crypto/bcrypt"
+	"crypto/sha256"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -21,16 +22,14 @@ func ConnectDatabase() {
 		panic("Failed to connect to database!")
 	}
 
-	database.AutoMigrate(&User{})
+	database.AutoMigrate(&User{}, &Stock{})
 
 	DB = database
 }
 
 func HashPassword(input string) string {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(input), bcrypt.DefaultCost)
-	if err != nil {
-		fmt.Printf("hash function failed: %s", err)
-		return ""
-	}
+	hasher := sha256.New()
+	hasher.Write([]byte(input))
+	hashedPassword := hex.EncodeToString(hasher.Sum(nil))
 	return string(hashedPassword)
 }

@@ -14,6 +14,7 @@ type LoginInput struct {
 }
 
 func SetupAuthRoutes(app *fiber.App) {
+	app.Post("/register", RegisterHandler)
 	app.Post("/login", LoginHandler)
 	app.Post("/logout", LogoutHandler)
 	app.Get("/me", AuthMiddleware, MeHandler)
@@ -26,17 +27,19 @@ func RegisterHandler(c *fiber.Ctx) error {
 	}
 
 	var user model.User
-	if err := model.DB.First(&user, "username = ?", input.Username).Error; err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid credentials"})
+
+	if err := model.DB.First(&user, "username = ?", input.Username).Error; err == nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Account already exists"})
 	}
 
-	if user.Password != model.HashPassword(input.Password) {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid credentials"})
-	}
+	user.Username = input.Username
+	user.Password = model.HashPassword(input.Password)
+
+	user.Cash = 100000.00
 
 	sessionToken := uuid.New().String()
 	user.SessionToken = sessionToken
-	model.DB.Save(&user)
+	model.DB.Create(&user)
 
 	c.Cookie(&fiber.Cookie{
 		Name:     "session_token",
@@ -50,7 +53,6 @@ func RegisterHandler(c *fiber.Ctx) error {
 }
 
 func LoginHandler(c *fiber.Ctx) error {
-	fmt.Printf("OH SHIT")
 	var input LoginInput
 	if err := c.BodyParser(&input); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid input"})
@@ -61,6 +63,7 @@ func LoginHandler(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid credentials"})
 	}
 
+	// fmt.Printf("%s\n%s\n", user.Password, model.HashPassword(input.Password))
 	if user.Password != model.HashPassword(input.Password) {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid credentials"})
 	}
