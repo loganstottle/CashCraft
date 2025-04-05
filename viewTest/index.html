@@ -2,7 +2,16 @@
 <html>
     <head>
         <title>CashCraft Home</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Noto+Serif&display=swap"
+            rel="stylesheet"
+        />
+
         <style>
+            * {
+                font-family: "Noto Serif", serif;
+                box-sizing: border-box;
+            }
             html,
             body {
                 height: 100%;
@@ -60,10 +69,19 @@
                 width: 50%;
                 background-color: magenta;
             }
-            .pidiv {
+            .piDiv {
                 height: 75%;
                 width: 100%;
                 background-color: deeppink;
+            }
+            .buySellButton {
+                height: 25%;
+                width: 100%;
+                background-color: green;
+                transition: all 0.2s ease-in-out;
+            }
+            .buySellButton:hover {
+                transform: scale(1.1);
             }
         </style>
     </head>
@@ -75,8 +93,8 @@
                 <div class="balvalbar">107k value, 3k balaance</div>
                 <div class="stockview">
                     <div class="stocksplit">
-                        <div class="pidiv">pie chart for whats owned</div>
-                        buy sell button
+                        <div class="piDiv">pie chart for whats owned</div>
+                        <button class="buySellButton">Buy & Sell</button>
                     </div>
                     <div class="stocksplit">
                         Chart for a selected stocks price
