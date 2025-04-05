@@ -12,6 +12,7 @@ import (
 )
 
 var validStocks = []string{"AAPL", "TSLA", "GOOG", "AMZN"}
+var validStocksNames = []string{"Apple", "Tesla", "Google", "Amazon"}
 
 type StockQuote struct {
 	CurrentPrice float64 `json:"c"`
@@ -19,6 +20,7 @@ type StockQuote struct {
 
 type StockPrice struct {
 	Symbol string
+	Name   string
 	Value  float64 `json:"value"`
 }
 
@@ -34,8 +36,8 @@ type Stock struct {
 func SetupStocks() []StockPrice {
 	var stocks []StockPrice
 
-	for _, stockSymbol := range validStocks {
-		s := StockPrice{stockSymbol, 0}
+	for i, stockSymbol := range validStocks {
+		s := StockPrice{stockSymbol, validStocksNames[i], 0}
 		s.UpdatePrice()
 		stocks = append(stocks, s)
 	}
