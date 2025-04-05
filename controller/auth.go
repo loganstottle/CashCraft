@@ -2,7 +2,6 @@ package controller
 
 import (
 	"CashCraft/model"
-	"fmt"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
