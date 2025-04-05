@@ -1,6 +1,10 @@
 package model
 
-import "github.com/jinzhu/gorm"
+import (
+	"fmt"
+
+	"github.com/jinzhu/gorm"
+)
 
 type User struct {
 	gorm.Model
@@ -12,12 +16,30 @@ type User struct {
 	SessionToken string  `json:"session_token"`
 }
 
-// func (u *User) ValuateStocks() float64 {
-// 	var value float64 = 0
+func (u *User) ValuateStocks() float64 {
+	var value float64 = 0
 
-// 	for _, stock := range u.Stocks {
-// 		value += [stock.Symbol] * stock.Amount
-// 	}
+	for _, stock := range u.Stocks {
+		s := StockPrice{}
+		if err := DB.First(&s, "symbol = ?", stock.Symbol).Error; err != nil {
+			fmt.Printf("Failed to valuate stocks for user %s: %s\n", u.Username, err)
+			continue
+		}
 
-// 	return value
-// }
+		fmt.Println(s.Value, stock.Amount)
+
+		value += s.Value * stock.Amount
+	}
+
+	return value
+}
+
+func (u *User) HasStock(symbol string) bool {
+	for _, stock := range u.Stocks {
+		if stock.Symbol == symbol {
+			return true
+		}
+	}
+
+	return false
+}

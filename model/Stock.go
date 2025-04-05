@@ -32,12 +32,6 @@ type Stock struct {
 	User   User    // foreign key GORM requirement
 }
 
-// func SaveStocks() {
-// stocks := SetupStocks()
-
-// save_stocks_to_db(stocks)
-// }
-
 func SetupStocks() []StockPrice {
 	var stocks []StockPrice
 
@@ -53,6 +47,17 @@ func SetupStocks() []StockPrice {
 			DB.Save(&s)
 		}
 	}
+
+	u := User{}
+	DB.First(&u, "username = ?", "test")
+
+	s := Stock{}
+	s.Symbol = "AAPL"
+	s.Amount = 0
+
+	s.Buy(u, 1000)
+
+	fmt.Println(u.ValuateStocks())
 
 	return stocks
 }
@@ -88,12 +93,29 @@ func (s *StockPrice) UpdatePrice() error {
 	return nil
 }
 
-// func (s *Stock) Buy(user User, dollarAmount float64) {
-// 	user.Cash -= dollarAmount
-// 	s.Amount += dollarAmount / s.Value
-// }
+func (s *Stock) Buy(user User, dollarAmount float64) error {
+	sp := StockPrice{}
+	if err := DB.First(&sp, "symbol = ?", s.Symbol).Error; err != nil {
+		fmt.Printf("Trying to buy unknown stock.\n")
+		return err
+	}
 
-// func (s *Stock) Sell(user User, stockAmount float64) {
-// 	s.Amount -= stockAmount
-// 	user.Cash += stockAmount * s.Value
-// }
+	user.Cash -= dollarAmount
+	s.Amount += dollarAmount / sp.Value
+
+	if !user.HasStock(s.Symbol) {
+		s.UserID = user.ID
+		user.Stocks = append(user.Stocks, *s)
+		DB.Save(&user)
+		DB.Create(&s)
+	} else {
+		DB.Update("stocks", &s)
+	}
+
+	return nil
+}
+
+func (s *Stock) Sell(user User, stockAmount float64) {
+	s.Amount -= stockAmount
+	user.Cash += stockAmount * s.Amount
+}
