@@ -8,6 +8,15 @@
         />
 
         <style>
+            #grad1 {
+                background-image: linear-gradient(#282828, #4c4c4c);
+                color: white;
+            }
+
+            #white-text {
+                color: white;
+            }
+
             * {
                 font-family: "Noto Serif", serif;
                 box-sizing: border-box;
@@ -29,7 +38,7 @@
                 display: flex;
             }
             .prices {
-                background-color: #fefbe9;
+                background-color: #4c4c4c;
                 width: 15%;
                 height: 100%;
             }
@@ -44,11 +53,6 @@
                 width: 85%;
             }
             .profileBar {
-                /* background: repeating-linear-gradient(
-                    bottom,
-                    black 50%,
-                    white 50%
-                ) */
                 height: 15%;
                 width: 100%;
                 background-color: saddlebrown;
@@ -56,7 +60,7 @@
             .balvalbar {
                 height: 10%;
                 width: 100%;
-                background-color: aqua;
+                background-color: #f6c453;
             }
             .stockview {
                 height: 75%;
@@ -67,12 +71,12 @@
             .stocksplit {
                 height: 100%;
                 width: 50%;
-                background-color: magenta;
+                background-color: #e1eedd;
             }
             .piDiv {
                 height: 75%;
                 width: 100%;
-                background-color: deeppink;
+                background-color: #e1eedd;
             }
             .buySellButton {
                 height: 25%;
@@ -87,9 +91,9 @@
     </head>
     <body>
         <div class="mainbox">
-            <div class="prices">Prices</div>
+            <div id="white-text" class="prices">Prices</div>
             <div class="userSpecific">
-                <div class="profileBar">John's portfolio</div>
+                <div id="grad1" class="profileBar">John's portfolio</div>
                 <div class="balvalbar">107k value, 3k balaance</div>
                 <div class="stockview">
                     <div class="stocksplit">
@@ -102,6 +106,6 @@
                 </div>
             </div>
         </div>
-        <div class="tickerbar">Ticker Bar</div>
+        <div id="white-text" class="tickerbar">Ticker Bar</div>
     </body>
 </html>
