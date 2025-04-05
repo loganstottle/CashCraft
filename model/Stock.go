@@ -17,6 +17,11 @@ type StockQuote struct {
 	CurrentPrice float64 `json:"c"`
 }
 
+type StockPrice struct {
+	Symbol string
+	Value  float64 `json:"value"`
+}
+
 type Stock struct {
 	gorm.Model
 	Symbol string
@@ -24,8 +29,20 @@ type Stock struct {
 	Amount float64 `json:"amount"`
 }
 
+func SetupStocks() []StockPrice {
+	var stocks []StockPrice
+
+	for _, stockSymbol := range validStocks {
+		s := StockPrice{stockSymbol, 0}
+		s.UpdatePrice()
+		stocks = append(stocks, s)
+	}
+
+	return stocks
+}
+
 // todo: refresh all values per hour
-func (s *Stock) GetValue() error {
+func (s *StockPrice) UpdatePrice() error {
 	resp, err := http.Get(fmt.Sprintf("https://finnhub.io/api/v1/quote?symbol=%s&token=%s", s.Symbol, os.Getenv("FINNHUB_API_KEY")))
 	if err != nil {
 		fmt.Printf("Failed to make GET request: %v\n", err)
