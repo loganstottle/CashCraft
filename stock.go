@@ -6,6 +6,9 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
+
+	"github.com/joho/godotenv"
 )
 
 var validStocks = []string{"AAPL", "TSLA", "GOOG", "AMZN"}
@@ -14,8 +17,14 @@ type StockQuote struct {
 	CurrentPrice float64 `json:"c"`
 }
 
-func GetCurrentPrice(apiKey string, symbol string) float64 {
-	resp, err := http.Get(fmt.Sprintf("https://finnhub.io/api/v1/quote?symbol=%s&token=%s", symbol, apiKey))
+func LoadEnv() {
+	if err := godotenv.Load(); err != nil {
+		log.Fatal("Could not load .env")
+	}
+}
+
+func GetCurrentPrice(symbol string) float64 {
+	resp, err := http.Get(fmt.Sprintf("https://finnhub.io/api/v1/quote?symbol=%s&token=%s", symbol, os.Getenv("FINNHUB_API_KEY")))
 	if err != nil {
 		log.Fatalf("Failed to make GET request: %v", err)
 	}

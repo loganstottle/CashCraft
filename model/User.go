@@ -4,7 +4,7 @@ import "github.com/jinzhu/gorm"
 
 type User struct {
 	gorm.Model
-	User         string `json:"user"`
+	Username     string `json:"username"`
 	Password     string `json:"password"`
 	SessionToken string `json:"session_token"`
 }

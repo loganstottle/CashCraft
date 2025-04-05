@@ -1,8 +1,7 @@
 package routes
 
 import (
-    "github.com/loganstottle/CashCraft/model"
-    "os"
+	"github.com/loganstottle/CashCraft/model"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -61,8 +60,6 @@ func meHandler(c *fiber.Ctx) error {
 	user := c.Locals("user").(model.User)
 	return c.JSON(fiber.Map{
 		"id":       user.ID,
-		"email":    user.Email,
 		"username": user.Username,
 	})
 }
-

@@ -1,12 +1,13 @@
 package model
 
 import (
-    "gorm.io/driver/mysql"
-    "gorm.io/gorm"
-    "github.com/joho/godotenv"
-    "os"
-    "fmt"
+	"fmt"
+	"os"
+
+	"github.com/joho/godotenv"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 var DB *gorm.DB
@@ -16,14 +17,14 @@ func ConnectionDatabase() {
 	if err != nil {
 		panic("Couldn't open .env")
 	}
-    user := os.Getenv("DBUSER")
-    password := os.Getenv("DBPW")
-    dsn := fmt.Sprintf("%s:%s@tcp(127.0.0.1:3306)/cashcraft?parseTime=true", user, password)
-    database, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	user := os.Getenv("DBUSER")
+	password := os.Getenv("DBPW")
+	dsn := fmt.Sprintf("%s:%s@tcp(127.0.0.1:3306)/cashcraft?parseTime=true", user, password)
+	database, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
-    if err != nil {
-        panic("Failed to connect to database!")
-    }
+	if err != nil {
+		panic("Failed to connect to database!")
+	}
 
 	database.AutoMigrate(&User{})
 
@@ -31,10 +32,10 @@ func ConnectionDatabase() {
 }
 
 func HashPassword(input string) string {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(input), bcrypt.DefaultCost)
 	if err != nil {
-		return ""
 		fmt.Printf("hash function failed: %s", err)
+		return ""
 	}
 	return string(hashedPassword)
 }
