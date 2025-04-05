@@ -22,10 +22,20 @@ func SetupAuthRoutes(app *fiber.App) {
 }
 
 func GetRegister(c *fiber.Ctx) error {
+	var user model.User
+	if err := model.DB.First(&user, "username = ? and session_token = ?", c.Cookies("username"), c.Cookies("session_token")).Error; err == nil {
+		return c.Redirect("/")
+	}
+
 	return c.Render("./view/register/index.html", fiber.Map{})
 }
 
 func GetLogin(c *fiber.Ctx) error {
+	var user model.User
+	if err := model.DB.First(&user, "username = ? and session_token = ?", c.Cookies("username"), c.Cookies("session_token")).Error; err == nil {
+		return c.Redirect("/")
+	}
+
 	return c.Render("./view/login/index.html", fiber.Map{})
 }
 
@@ -79,6 +89,14 @@ func LoginHandler(c *fiber.Ctx) error {
 	sessionToken := uuid.New().String()
 	user.SessionToken = sessionToken
 	model.DB.Save(&user)
+
+	c.Cookie(&fiber.Cookie{
+		Name:     "username",
+		Value:    input.Username,
+		HTTPOnly: true,
+		Secure:   true,
+		SameSite: "Strict",
+	})
 
 	c.Cookie(&fiber.Cookie{
 		Name:     "session_token",
