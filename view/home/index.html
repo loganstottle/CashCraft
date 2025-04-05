@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
     <head>
-        <link rel="icon" type="image/png" href="../logo.png"/>
+        <link rel="icon" type="image/png" href="../logo.png" />
         <title>CashCraft -</title>
     </head>
 
@@ -10,7 +10,11 @@
             <button type="submit" id="logout-button">Logout</button>
         </form>
         <h2>{{ .Username }} - My Portfolio</h2>
-        <h1>Balance: {{ .Balance }}</h1>
+        <p>Net Worth: {{ .Balance }}</p>
+        <p>Cash: {{ .Balance }}</p>
+        <h3>Your Stocks</h3>
+        <p>...</p>
+        <h3>Stock Prices</h3>
         <div>{{.StocksData}}</div>
     </body>
 </html>

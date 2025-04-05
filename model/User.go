@@ -11,3 +11,13 @@ type User struct {
 	Stocks       []Stock `json:"stocks"`
 	SessionToken string  `json:"session_token"`
 }
+
+// func (u *User) ValuateStocks() float64 {
+// 	var value float64 = 0
+
+// 	for _, stock := range u.Stocks {
+// 		value += [stock.Symbol] * stock.Amount
+// 	}
+
+// 	return value
+// }

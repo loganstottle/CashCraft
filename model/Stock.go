@@ -19,7 +19,7 @@ type StockQuote struct {
 }
 
 type StockPrice struct {
-	Symbol string
+	Symbol string `json:"symbol"`
 	Name   string
 	Value  float64 `json:"value"`
 }
@@ -27,11 +27,16 @@ type StockPrice struct {
 type Stock struct {
 	gorm.Model
 	Symbol string
-	Value  float64 `json:"value"`
 	Amount float64 `json:"amount"`
 	UserID int     // foreign key GORM requirement
 	User   User    // foreign key GORM requirement
 }
+
+// func SaveStocks() {
+// stocks := SetupStocks()
+
+// save_stocks_to_db(stocks)
+// }
 
 func SetupStocks() []StockPrice {
 	var stocks []StockPrice
@@ -40,6 +45,13 @@ func SetupStocks() []StockPrice {
 		s := StockPrice{stockSymbol, validStocksNames[i], 0}
 		s.UpdatePrice()
 		stocks = append(stocks, s)
+		if err := DB.First(&s, "symbol = ?", stockSymbol).Error; err != nil {
+			DB.Create(&s)
+		} else {
+			stock := DB.Model(StockPrice{}).Where("symbol = ?", stockSymbol)
+			stock.Update("value", s.Value)
+			DB.Save(&s)
+		}
 	}
 
 	return stocks
@@ -76,12 +88,12 @@ func (s *StockPrice) UpdatePrice() error {
 	return nil
 }
 
-func (s *Stock) Buy(user User, dollarAmount float64) {
-	user.Cash -= dollarAmount
-	s.Amount += dollarAmount / s.Value
-}
+// func (s *Stock) Buy(user User, dollarAmount float64) {
+// 	user.Cash -= dollarAmount
+// 	s.Amount += dollarAmount / s.Value
+// }
 
-func (s *Stock) Sell(user User, stockAmount float64) {
-	s.Amount -= stockAmount
-	user.Cash += stockAmount * s.Value
-}
+// func (s *Stock) Sell(user User, stockAmount float64) {
+// 	s.Amount -= stockAmount
+// 	user.Cash += stockAmount * s.Value
+// }

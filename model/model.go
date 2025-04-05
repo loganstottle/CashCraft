@@ -1,11 +1,12 @@
 package model
 
 import (
+	"encoding/hex"
 	"fmt"
 	"os"
-	"encoding/hex"
 
 	"crypto/sha256"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -22,7 +23,7 @@ func ConnectDatabase() {
 		panic("Failed to connect to database!")
 	}
 
-	database.AutoMigrate(&User{}, &Stock{})
+	database.AutoMigrate(&User{}, &Stock{}, &StockPrice{})
 
 	DB = database
 }
