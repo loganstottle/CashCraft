@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"your-app/db"
-	"your-app/models"
+    "github.com/loganstottle/CashCraft/model"
+    "os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -25,18 +25,18 @@ func loginHandler(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid input"})
 	}
 
-	var user models.User
-	if err := db.DB.First(&user, "email = ?", input.Email).Error; err != nil {
+	var user model.User
+	if err := model.DB.First(&user, "email = ?", input.Email).Error; err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid credentials"})
 	}
 
-	if user.Password != models.HashPassword(input.Password) {
+	if user.Password != model.HashPassword(input.Password) {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid credentials"})
 	}
 
 	sessionToken := uuid.New().String()
 	user.SessionToken = sessionToken
-	db.DB.Save(&user)
+	model.DB.Save(&user)
 
 	c.Cookie(&fiber.Cookie{
 		Name:     "session_token",
@@ -51,14 +51,14 @@ func loginHandler(c *fiber.Ctx) error {
 
 func logoutHandler(c *fiber.Ctx) error {
 	sessionToken := c.Cookies("session_token")
-	db.DB.Model(&models.User{}).Where("session_token = ?", sessionToken).Update("session_token", nil)
+	model.DB.Model(&model.User{}).Where("session_token = ?", sessionToken).Update("session_token", nil)
 
 	c.ClearCookie("session_token")
 	return c.JSON(fiber.Map{"message": "Logged out"})
 }
 
 func meHandler(c *fiber.Ctx) error {
-	user := c.Locals("user").(models.User)
+	user := c.Locals("user").(model.User)
 	return c.JSON(fiber.Map{
 		"id":       user.ID,
 		"email":    user.Email,
