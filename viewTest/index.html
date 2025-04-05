@@ -2,19 +2,16 @@
 <html>
     <head>
         <title>CashCraft Home</title>
-        <link
-            href="https://fonts.googleapis.com/css2?family=Noto+Serif&display=swap"
-            rel="stylesheet"
-        />
+        <link rel="icon" type="image/png" href="../view/logo.png"/>
 
         <style>
             #grad1 {
-                background-image: linear-gradient(#282828, #4c4c4c);
+                background-image: linear-gradient(#282828, #5e5e5e);
                 color: white;
             }
 
-            #white-text {
-                color: white;
+            #grad2 {
+                background-image: linear-gradient()
             }
 
             * {
@@ -25,15 +22,16 @@
             body {
                 height: 100%;
                 margin: 0px; /* Optional: remove default spacing */
+                background-color: black;
             }
             div {
-                /* border-radius: 5px;
-                border: 1px solid black; */
-                /* margin: 5%; */
+                border-radius: 10px;
+                border: 1px solid black;
                 text-align: center;
+                font-family: serif;
+                font-size: 20px;
             }
             .mainbox {
-                background-color: lightblue;
                 height: 85%;
                 display: flex;
             }
@@ -43,19 +41,16 @@
                 height: 100%;
             }
             .tickerbar {
-                background-color: pink;
                 height: 15%;
                 width: 100%;
             }
             .userSpecific {
-                background-color: blueviolet;
                 height: 100%;
                 width: 85%;
             }
             .profileBar {
                 height: 15%;
                 width: 100%;
-                background-color: saddlebrown;
             }
             .balvalbar {
                 height: 10%;
@@ -65,12 +60,15 @@
             .stockview {
                 height: 75%;
                 width: 100%;
-                background-color: forestgreen;
                 display: flex;
             }
             .stocksplit {
                 height: 100%;
                 width: 50%;
+            }
+            .stockChart {
+                height: 100%;
+                width: 100%;
                 background-color: #e1eedd;
             }
             .piDiv {
@@ -79,9 +77,10 @@
                 background-color: #e1eedd;
             }
             .buySellButton {
+                border-radius: 10px;
                 height: 25%;
                 width: 100%;
-                background-color: green;
+                background-color: #f6c453;
                 transition: all 0.2s ease-in-out;
             }
             .buySellButton:hover {
@@ -91,7 +90,7 @@
     </head>
     <body>
         <div class="mainbox">
-            <div id="white-text" class="prices">Prices</div>
+            <div id="grad1" class="prices">Prices</div>
             <div class="userSpecific">
                 <div id="grad1" class="profileBar">John's portfolio</div>
                 <div class="balvalbar">107k value, 3k balaance</div>
@@ -101,11 +100,11 @@
                         <button class="buySellButton">Buy & Sell</button>
                     </div>
                     <div class="stocksplit">
-                        Chart for a selected stocks price
+                        <div class="stockChart">chart of stock cost</div>>
                     </div>
                 </div>
             </div>
         </div>
-        <div id="white-text" class="tickerbar">Ticker Bar</div>
+        <div id="grad1" class="tickerbar">Ticker Bar</div>
     </body>
 </html>
