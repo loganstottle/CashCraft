@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+    <head>
+        <title>CashCraft Home</title>
+        <style>
+            html,
+            body {
+                height: 100%;
+                margin: 0px; /* Optional: remove default spacing */
+            }
+            div {
+                /* border-radius: 5px;
+                border: 1px solid black; */
+                /* margin: 5%; */
+                text-align: center;
+            }
+            .mainbox {
+                background-color: lightblue;
+                height: 85%;
+                display: flex;
+            }
+            .prices {
+                background-color: #fefbe9;
+                width: 15%;
+                height: 100%;
+            }
+            .tickerbar {
+                background-color: pink;
+                height: 15%;
+                width: 100%;
+            }
+            .userSpecific {
+                background-color: blueviolet;
+                height: 100%;
+                width: 85%;
+            }
+            .profileBar {
+                /* background: repeating-linear-gradient(
+                    bottom,
+                    black 50%,
+                    white 50%
+                ) */
+                height: 15%;
+                width: 100%;
+                background-color: saddlebrown;
+            }
+            .balvalbar {
+                height: 10%;
+                width: 100%;
+                background-color: aqua;
+            }
+            .stockview {
+                height: 75%;
+                width: 100%;
+                background-color: forestgreen;
+                display: flex;
+            }
+            .stocksplit {
+                height: 100%;
+                width: 50%;
+                background-color: magenta;
+            }
+            .pidiv {
+                height: 75%;
+                width: 100%;
+                background-color: deeppink;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="mainbox">
+            <div class="prices">Prices</div>
+            <div class="userSpecific">
+                <div class="profileBar">John's portfolio</div>
+                <div class="balvalbar">107k value, 3k balaance</div>
+                <div class="stockview">
+                    <div class="stocksplit">
+                        <div class="pidiv">pie chart for whats owned</div>
+                        buy sell button
+                    </div>
+                    <div class="stocksplit">
+                        Chart for a selected stocks price
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tickerbar">Ticker Bar</div>
+    </body>
+</html>
