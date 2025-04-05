@@ -1,0 +1,110 @@
+<!doctype html>
+<html>
+    <head>
+        <title>CashCraft Home</title>
+        <link rel="icon" type="image/png" href="../view/logo.png"/>
+
+        <style>
+            #grad1 {
+                background-image: linear-gradient(#282828, #5e5e5e);
+                color: white;
+            }
+
+            #grad2 {
+                background-image: linear-gradient()
+            }
+
+            * {
+                font-family: "Noto Serif", serif;
+                box-sizing: border-box;
+            }
+            html,
+            body {
+                height: 100%;
+                margin: 0px; /* Optional: remove default spacing */
+                background-color: black;
+            }
+            div {
+                border-radius: 10px;
+                border: 1px solid black;
+                text-align: center;
+                font-family: serif;
+                font-size: 20px;
+            }
+            .mainbox {
+                height: 85%;
+                display: flex;
+            }
+            .prices {
+                background-color: #4c4c4c;
+                width: 15%;
+                height: 100%;
+            }
+            .tickerbar {
+                height: 15%;
+                width: 100%;
+            }
+            .userSpecific {
+                height: 100%;
+                width: 85%;
+            }
+            .profileBar {
+                height: 15%;
+                width: 100%;
+            }
+            .balvalbar {
+                height: 10%;
+                width: 100%;
+                background-color: #f6c453;
+            }
+            .stockview {
+                height: 75%;
+                width: 100%;
+                display: flex;
+            }
+            .stocksplit {
+                height: 100%;
+                width: 50%;
+            }
+            .stockChart {
+                height: 100%;
+                width: 100%;
+                background-color: #e1eedd;
+            }
+            .piDiv {
+                height: 75%;
+                width: 100%;
+                background-color: #e1eedd;
+            }
+            .buySellButton {
+                border-radius: 10px;
+                height: 25%;
+                width: 100%;
+                background-color: #f6c453;
+                transition: all 0.2s ease-in-out;
+            }
+            .buySellButton:hover {
+                transform: scale(1.1);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="mainbox">
+            <div id="grad1" class="prices">Prices</div>
+            <div class="userSpecific">
+                <div id="grad1" class="profileBar">John's portfolio</div>
+                <div class="balvalbar">107k value, 3k balaance</div>
+                <div class="stockview">
+                    <div class="stocksplit">
+                        <div class="piDiv">pie chart for whats owned</div>
+                        <button class="buySellButton">Buy & Sell</button>
+                    </div>
+                    <div class="stocksplit">
+                        <div class="stockChart">chart of stock cost</div>>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="grad1" class="tickerbar">Ticker Bar</div>
+    </body>
+</html>
