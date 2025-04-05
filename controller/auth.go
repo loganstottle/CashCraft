@@ -13,10 +13,20 @@ type LoginInput struct {
 }
 
 func SetupAuthRoutes(app *fiber.App) {
+	app.Get("/register", GetRegister)
+	app.Get("/login", GetLogin)
 	app.Post("/register", RegisterHandler)
 	app.Post("/login", LoginHandler)
 	app.Post("/logout", LogoutHandler)
 	app.Get("/me", AuthMiddleware, MeHandler)
+}
+
+func GetRegister(c *fiber.Ctx) error {
+	return c.Render("./view/register/index.html", fiber.Map{})
+}
+
+func GetLogin(c *fiber.Ctx) error {
+	return c.Render("./view/login/index.html", fiber.Map{})
 }
 
 func RegisterHandler(c *fiber.Ctx) error {
@@ -62,7 +72,6 @@ func LoginHandler(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid credentials"})
 	}
 
-	// fmt.Printf("%s\n%s\n", user.Password, model.HashPassword(input.Password))
 	if user.Password != model.HashPassword(input.Password) {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid credentials"})
 	}
