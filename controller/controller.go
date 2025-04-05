@@ -19,10 +19,10 @@ func StartServer() {
 
 	app := fiber.New()
 
-	app.Static("/", "./views/home")
-	app.Static("/login", "./views/login")
-	app.Static("/register", "./views/register")
+	app.Static("/", "./view/home")
+	app.Static("/login", "./view/login")
+	app.Static("/register", "./view/register")
 	SetupAuthRoutes(app)
-	app.Static("/*", "./views/404")
+	app.Static("/*", "./view/404")
 	app.Listen(":3000")
 }
