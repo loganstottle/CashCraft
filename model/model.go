@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/joho/godotenv"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -12,11 +11,7 @@ import (
 
 var DB *gorm.DB
 
-func ConnectionDatabase() {
-	err := godotenv.Load(".env")
-	if err != nil {
-		panic("Couldn't open .env")
-	}
+func ConnectDatabase() {
 	user := os.Getenv("DBUSER")
 	password := os.Getenv("DBPW")
 	dsn := fmt.Sprintf("%s:%s@tcp(127.0.0.1:3306)/cashcraft?parseTime=true", user, password)

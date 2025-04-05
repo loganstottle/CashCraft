@@ -1,14 +1,10 @@
 package main
 
 import (
-	"fmt"
+	"CashCraft/controller"
 )
 
 func main() {
-	LoadEnv()
-
-	price := GetCurrentPrice("GOOG")
-	fmt.Println(price)
-
-	RunServer()
+	controller.LoadEnv()
+	controller.StartServer()
 }

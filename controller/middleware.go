@@ -1,12 +1,12 @@
-package routes
+package controller
 
 import (
-    "github.com/loganstottle/CashCraft/model"
+	"CashCraft/model"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-func authMiddleware(c *fiber.Ctx) error {
+func AuthMiddleware(c *fiber.Ctx) error {
 	sessionToken := c.Cookies("session_token")
 	if sessionToken == "" {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Unauthorized"})
@@ -20,4 +20,3 @@ func authMiddleware(c *fiber.Ctx) error {
 	c.Locals("user", user)
 	return c.Next()
 }
-

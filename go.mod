@@ -1,4 +1,4 @@
-module github.com/loganstottle/CashCraft
+module CashCraft
 
 go 1.23.3
 

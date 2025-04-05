@@ -1,12 +1,12 @@
-Make the webserver
-Display stock info
-Logins
-Stock events and rounds
-stock ownership
-calc value
-friends
-leagues with seperate balances
-leaderboards
-etc.
+done:
+ - fetch real time stock price
 
-https://www.tradingview.com
+todo:
+ - web server (various routes; templates (NATE))
+ - database (logins, balance and stock ownership)
+ - display stock info (buy/sell, price graph)
+ - friends, leagues, etc
+ - leaderboard
+ - nice styling
+
+- for graphs: https://www.tradingview.com
