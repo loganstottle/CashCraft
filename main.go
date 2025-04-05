@@ -1,7 +1,16 @@
 package main
 
-import "fmt"
+import (
+	"log"
+	"os"
+
+	"github.com/joho/godotenv"
+)
 
 func main() {
-    fmt.Println("hello, world!")
+	if err := godotenv.Load(); err != nil {
+		log.Fatal("Could not load .env")
+	}
+
+	TestFinance(os.Getenv("POLYGON_API_KEY"))
 }
