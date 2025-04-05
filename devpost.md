@@ -8,4 +8,14 @@ Last year we designed with the idea of wanting to make something work that looke
 # Challenges
 Challenges for this Hackathon came from the massive amount of data we needed to handle
 * Stock API
-  * 
+  * Aplha Vantage was delayed until the end of the day
+  * Morningstar didn't actually have any free API
+  * Polygon data was delyed by an hour
+  * Finage - what worked in the end - had documentation that differed from how the actual calls worked
+* GO Integration
+  * We had troubles in getting data pushed from out backend to the frontend through templates
+  * MySql being phased out by MariaDB on our Arch and Debian based machines
+* Collaboration
+  * This year we all had great ideas - and determining which ones to use was important
+  * We all have different aesthetic takes for front end work
+  * We use three different linux distros and one windows machine - why dockerizing is also on the todo list
