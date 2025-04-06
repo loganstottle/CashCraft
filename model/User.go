@@ -84,3 +84,25 @@ func (u *User) Buy(stockSymbol string, dollars float64) error {
 
 	return nil
 }
+
+func (u *User) Sell(stockSymbol string, stockAmount float64) error {
+	sp := StockPrice{}
+	if err := DB.First(&sp, "symbol = ?", stockSymbol).Error; err != nil {
+		fmt.Printf("Trying to sell unknown stock.\n")
+		return err
+	}
+
+	u.Cash += stockAmount * sp.Value
+
+	stock := Stock{}
+	if err := DB.First(&stock, "owner_id = ?", u.ID).Error; err != nil {
+		fmt.Printf("Trying to sell unowned stock\n")
+		return err
+	}
+	stock.Amount -= stockAmount
+	DB.Save(&stock)
+
+	DB.Save(u)
+
+	return nil
+}
