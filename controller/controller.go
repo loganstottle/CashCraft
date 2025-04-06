@@ -28,25 +28,13 @@ func StartServer() {
 
 	app := fiber.New() // Initialize the fiber app
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 	SetupHomeRoutes(app)           // Nice organization to keep the routes in seperate files (less merge errors)
 	SetupAuthRoutes(app)           // Other halve of the routes
 	SetupLeaderboardRoutes(app)
-	app.Static("/*", "./view/404") // For if someone puts in a wrong link (We are not case sensitive though - ease of use)
-=======
-=======
->>>>>>> 66cabed62f2804abdd3f0f6a46e4244f50df7ac3
-	SetupHomeRoutes(app) // Nice organization to keep the routes in seperate files (less merge errors)
-	SetupAuthRoutes(app) // Other halve of the routes
 	app.Static("/", "./view/home")
 	app.Static("/register", "./view/register")
 	app.Static("/login", "./view/login")
-	// app.Static("/*", "./view/404") // For if someone puts in a wrong link (We are not case sensitive though - ease of use)
-<<<<<<< HEAD
->>>>>>> 66cabed62f2804abdd3f0f6a46e4244f50df7ac3
-=======
->>>>>>> 66cabed62f2804abdd3f0f6a46e4244f50df7ac3
+	app.Static("/*", "./view/404") // For if someone puts in a wrong link (We are not case sensitive though - ease of use)
 	model.SetupStocks()
 	app.Listen(":3000") // Starts the server to where people can connect to it
 }
