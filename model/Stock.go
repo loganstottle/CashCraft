@@ -13,8 +13,8 @@ import (
 )
 
 // To eventually be changed to allow like - the S&P 500 - or any one on the NYSE stock exchange
-var ValidStocks = []string{"AAPL", "TSLA", "GOOG", "AMZN", "NVDA", "MSFT", "META", "COST", "DIS", "NFLX"}                           // Stocks accepted for everything
-var ValidStocksNames = []string{"Apple", "Tesla", "Google", "Amazon", "Nvidia", "Microsoft", "Meta", "Costco", "Disney", "Netflix"} // The names of those stocks
+var ValidStocks = []string{"AAPL", "TSLA", "GOOG", "AMZN", "NVDA", "MSFT", "META", "COST", "DIS", "NFLX", "PLTR", "WMT"}                                   // Stocks accepted for everything
+var ValidStocksNames = []string{"Apple", "Tesla", "Google", "Amazon", "Nvidia", "Microsoft", "Meta", "Costco", "Disney", "Netflix", "Palantir", "Walmart"} // The names of those stocks
 
 type StockQuote struct { // a struct that holds the current price for a stock
 	CurrentPrice float64 `json:"c"`
