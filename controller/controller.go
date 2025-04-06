@@ -29,12 +29,13 @@ func StartServer() {
 
 	app := fiber.New(fiber.Config{Views: html.New("./view", ".html")}) // Initialize the fiber app
 
-	SetupHomeRoutes(app) // Nice organization to keep the routes in seperate files (less merge errors)
-	SetupAuthRoutes(app) // Other halve of the routes
+	SetupHomeRoutes(app)           // Nice organization to keep the routes in seperate files (less merge errors)
+	SetupAuthRoutes(app)           // Other halve of the routes
+	SetupLeaderboardRoutes(app)
 	app.Static("/", "./view/home")
 	app.Static("/register", "./view/register")
 	app.Static("/login", "./view/login")
-	// app.Static("/*", "./view/404") // For if someone puts in a wrong link (We are not case sensitive though - ease of use)
+	app.Static("/*", "./view/404") // For if someone puts in a wrong link (We are not case sensitive though - ease of use)
 	model.SetupStocks()
 	app.Listen(":3000") // Starts the server to where people can connect to it
 }
