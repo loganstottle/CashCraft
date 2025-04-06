@@ -12,25 +12,24 @@ type User struct {
 	Username     string  `json:"username"`
 	Password     string  `json:"password"`
 	Cash         float64 `json:"cash"`
-	Stocks       []Stock `gorm:"many2many;stocks;"`
 	SessionToken string  `json:"session_token"`
 }
 
-func (u *User) ValuateStocks() float64 {
-	var value float64 = 0
-
-	for _, stock := range u.Stocks {
-		s := StockPrice{}
-		if err := DB.First(&s, "symbol = ?", stock.Symbol).Error; err != nil {
-			fmt.Printf("Failed to valuate stocks for user %s: %s\n", u.Username, err)
-			continue
-		}
-
-		value += s.Value * stock.Amount
-	}
-
-	return value
-}
+// func (u *User) ValuateStocks() float64 {
+// 	var value float64 = 0
+//
+// 	for _, stock := range u.Stocks {
+// 		s := StockPrice{}
+// 		if err := DB.First(&s, "symbol = ?", stock.Symbol).Error; err != nil {
+// 			fmt.Printf("Failed to valuate stocks for user %s: %s\n", u.Username, err)
+// 			continue
+// 		}
+//
+// 		value += s.Value * stock.Amount
+// 	}
+//
+// 	return value
+// }
 
 // func (u *User) GetStock(symbol string) (Stock, error) {
 	// for _, stock := range u.Stocks {

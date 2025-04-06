@@ -49,7 +49,7 @@ func GetHome(c *fiber.Ctx) error {
 	return c.Render("./view/home/index.html", fiber.Map{ // Data that we feed into the home page
 		"Username":       user.Username,
 		"Balance":        FormatBalance(user.Cash),
-		"StockValuation": user.ValuateStocks(),
+		// "StockValuation": user.ValuateStocks(),
 		"StocksData":     stocksData,
 	})
 }

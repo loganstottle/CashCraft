@@ -41,8 +41,7 @@ func SetupStocks() []StockPrice {
 		if err := DB.First(&s, "symbol = ?", stockSymbol).Error; err != nil {
 			DB.Create(&s)
 		} else {
-			stock := DB.Model(StockPrice{}).Where("symbol = ?", stockSymbol)
-			stock.Update("value", s.Value)
+			DB.Model(StockPrice{}).Where("symbol = ?", stockSymbol).Update("value", s.Value)
 			DB.Save(&s)
 		}
 	}
@@ -52,7 +51,7 @@ func SetupStocks() []StockPrice {
 
 	u.Buy("AAPL", 1000)
 
-	fmt.Println(u.ValuateStocks())
+	// fmt.Println(u.ValuateStocks())
 
 	return stocks
 }
