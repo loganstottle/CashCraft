@@ -28,6 +28,7 @@ type Stock struct {
 	gorm.Model
 	Symbol string
 	Amount float64 `json:"amount"`
+	OwnerID uint
 }
 
 func SetupStocks() []StockPrice {

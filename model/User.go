@@ -1,7 +1,7 @@
 package model
 
 import (
-	"errors"
+	// "errors"
 	"fmt"
 
 	"github.com/jinzhu/gorm"
@@ -32,27 +32,27 @@ func (u *User) ValuateStocks() float64 {
 	return value
 }
 
-func (u *User) GetStock(symbol string) (Stock, error) {
-	for _, stock := range u.Stocks {
-		if stock.Symbol == symbol {
-			return stock, nil
-		}
-	}
+// func (u *User) GetStock(symbol string) (Stock, error) {
+	// for _, stock := range u.Stocks {
+	// 	if stock.Symbol == symbol {
+	// 		return stock, nil
+	// 	}
+	// }
 
-	return Stock{}, errors.New("no stock exists")
-}
+	// return Stock{}, errors.New("no stock exists")
+// }
 
-func (u *User) SetStock(stock Stock) error {
-	for i, s := range u.Stocks {
-		if s.Symbol == stock.Symbol {
-			u.Stocks[i].Amount = stock.Amount
-			fmt.Println(u.Stocks[i].Amount)
-			return nil
-		}
-	}
+// func (u *User) SetStock(stock Stock) error {
+	// for i, s := range u.Stocks {
+	// 	if s.Symbol == stock.Symbol {
+	// 		u.Stocks[i].Amount = stock.Amount
+	// 		fmt.Println(u.Stocks[i].Amount)
+	// 		return nil
+	// 	}
+	// }
 
-	return errors.New("no stock exists")
-}
+	// return errors.New("no stock exists")
+// }
 
 func (u *User) Buy(stockSymbol string, dollars float64) error {
 	sp := StockPrice{}
@@ -63,24 +63,18 @@ func (u *User) Buy(stockSymbol string, dollars float64) error {
 
 	u.Cash -= dollars
 
-	stock, stockErr := u.GetStock(stockSymbol)
-	if stockErr != nil {
+	stock := Stock{}
+	if err := DB.First(&stock, "owner_id = ?", u.ID).Error; err != nil {
 		stock := Stock{
 			Symbol: stockSymbol,
 			Amount: dollars / sp.Value,
+			OwnerID: u.ID,
 		}
 
-		u.Stocks = append(u.Stocks, stock)
-
-		DB.Save(&stock)
+		DB.Create(&stock)
 	} else {
 		stock.Amount += dollars / sp.Value
-		if err := u.SetStock(stock); err != nil {
-			fmt.Println("Could not set stock")
-			return err
-		}
-
-		DB.Save(stock)
+		DB.Save(&stock)
 	}
 
 	DB.Save(u)
