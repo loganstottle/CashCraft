@@ -3,13 +3,13 @@
     const symbol = e.target.id.replace("buy-", "");
     const dollars = parseFloat(prompt("Amount (dollars): "));
 
-    fetch("/buy", {
+    const resp = await fetch("/buy", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ Symbol: symbol, Dollars: dollars }),
     });
 
-    reload();
+    location.reload();
   };
 });
 
@@ -18,12 +18,12 @@
     const symbol = e.target.id.replace("sell-", "");
     const amount = parseFloat(prompt("Amount (stock units): "));
 
-    fetch("/sell", {
+    const resp = await fetch("/sell", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ Symbol: symbol, Amount: amount }),
     });
 
-    reload();
+    location.reload();
   };
 });

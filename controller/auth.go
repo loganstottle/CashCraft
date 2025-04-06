@@ -30,7 +30,8 @@ func SetupAuthRoutes(app *fiber.App) { // This connects the different subdomains
 	app.Post("/logout", LogoutHandler)     //        Lets the user logout of their session
 	app.Post("/buy", BuyHandler)
 	app.Post("/sell", SellHandler)
-	app.Get("/me", AuthMiddleware, MeHandler) // *TODO*
+	app.Get("/logo.png", LogoHandler)
+	// app.Get("/me", AuthMiddleware, MeHandler) // *TODO*
 }
 
 /* The MVC we are using essentially means that we have multiple views that the user sees
@@ -201,4 +202,8 @@ func SellHandler(c *fiber.Ctx) error {
 	user.Sell(input.Symbol, input.Amount)
 
 	return nil
+}
+
+func LogoHandler(c *fiber.Ctx) error {
+	return c.SendFile("./view/logo.png")
 }
