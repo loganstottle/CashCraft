@@ -46,10 +46,11 @@ func GetHome(c *fiber.Ctx) error {
 		stocksData += fmt.Sprintf("<strong>%s (%s)</strong>: %s<br>", stock.Name, stock.Symbol, FormatBalance(stock.Value))
 	} // This turns the stock data into a string - because we had issues with go templates
 
+	stockValuation, _ := user.ValuateStocks()
 	return c.Render("./view/home/index.html", fiber.Map{ // Data that we feed into the home page
 		"Username":       user.Username,
 		"Balance":        FormatBalance(user.Cash),
-		// "StockValuation": user.ValuateStocks(),
+		"StockValuation": FormatBalance(stockValuation),
 		"StocksData":     stocksData,
 	})
 }
