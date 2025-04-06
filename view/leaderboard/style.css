@@ -1,0 +1,44 @@
+html,
+body {
+    width: 100vw;
+    height: 100vh;
+    background: #121214;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+* {
+    font-family: Helvetica;
+    font-size: 40px;
+    text-align: center;
+    color: #444;
+}
+
+.number {
+    color: #666;
+}
+
+.name {
+    color: #ccc;
+}
+
+.stock {
+    color: #fff;
+}
+
+#break {
+    width: 90%;
+    height: 3px;
+    border: none;
+    outline: none;
+    margin: 25px auto;
+    padding: 0px;
+    background: #333;
+}
+
+#title {
+    color: #fff;
+    text-decoration: underline;
+    margin-bottom: 0;
+}

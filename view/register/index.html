@@ -3,30 +3,36 @@
     <head>
         <link rel="icon" type="image/png" href="../logo.png" />
         <title>CashCraft - Register</title>
-        <link rel="stylesheet" href="/login/style.css" />
+        <link rel="stylesheet" href="/register/style.css" />
         <script src="/register/index.js" defer></script>
     </head>
     <body>
-        <div class="register-form">
-            <h2>Sign Up</h2>
-            <p>Already registered? Login <a href="/login">here</a>.</p>
+        <div id="register-form">
+            <h2 id="signup">Sign Up</h2>
+            <p id="already-registered">
+                Already registered? Login <a href="/login">here</a>.
+            </p>
             <p id="err"></p>
-            <label for="username">Username:</label>
-            <input
-                type="text"
-                id="username"
-                name="username"
-                placeholder="John Doe"
-                required
-            /><br />
-            <label for="password">Password:</label>
-            <input
-                type="password"
-                id="password"
-                name="password"
-                placeholder="******"
-                required
-            /><br /><br />
+            <div id="username-container">
+                <label id="username-label" for="username">Username</label><br />
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="JohnDoe7"
+                    required
+                />
+            </div>
+            <div id="password-container">
+                <label id="password-label" for="password">Password</label><br />
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="******"
+                    required
+                />
+            </div>
             <button id="submit">Create Account</button>
         </div>
     </body>

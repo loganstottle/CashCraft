@@ -35,6 +35,7 @@ func StartServer() {
 	app.Static("/", "./view/home")
 	app.Static("/register", "./view/register")
 	app.Static("/login", "./view/login")
+	app.Static("/leaderboard", "./view/leaderboard")
 	app.Static("/*", "./view/404") // For if someone puts in a wrong link (We are not case sensitive though - ease of use)
 	model.SetupStocks()
 	model.SetupStocksCron()

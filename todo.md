@@ -2,11 +2,10 @@ done:
  - fetch real time stock price
  - web server with templates
  - logins
-
-todo:
- - buy/sell stocks, graphs
- - friends, leagues, etc
  - leaderboard
+ - buy/sell stocks
  - nice styling
 
-- for graphs: https://www.tradingview.com
+todo:
+ - graphs over time
+ - friends, leagues, etc

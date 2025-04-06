@@ -12,13 +12,15 @@ import (
 func FormatBalance(amount float64) string {
 	var result string
 	balance_str := fmt.Sprintf("%.2f", amount)
+	// <<<<<<< HEAD
 
+	// =======
+	// >>>>>>> 35e13ebcd09545d598d5fd7ec6f4b76e7ccae19d
 	if amount < 1000 {
 		return "$" + balance_str // If you don't have one thousand dollar, commas are not needed
 	}
 
 	for i := len(balance_str) - 1; i >= 0; i-- {
-
 		if i < len(balance_str)-4 && (len(balance_str)-i-1)%3 == 0 { // Commaizing code
 			result = "," + result
 		}
@@ -43,13 +45,12 @@ func GetHome(c *fiber.Ctx) error {
 
 	// This code is used to calculate the net worth of the user
 	cashBalance := user.Cash
-	netWorth, _ := user.ValuateStocks()
-	netWorth += cashBalance
+	netWorth := cashBalance + user.ValuateStocks()
 
 	var myStockData string
 	var stocksData string
 	for _, stock := range model.GetStocks() {
-		myStockData += fmt.Sprintf("<strong>%s (%s)</strong>: %s (%s)<br>", stock.Name, stock.Symbol, FormatBalance(user.GetStock(stock.Symbol))[1:], FormatBalance(stock.Value*user.GetStock(stock.Symbol)))
+		myStockData += fmt.Sprintf("<strong>%s (%s)</strong>: %s (%s) <button id=\"buy-%s\" class=\"buy\">Buy</button> <button id=\"sell-%s\" class=\"sell\">Sell</button><br>", stock.Name, stock.Symbol, FormatBalance(user.GetStock(stock.Symbol))[1:], FormatBalance(stock.Value*user.GetStock(stock.Symbol)), stock.Symbol, stock.Symbol)
 		stocksData += fmt.Sprintf("<strong>%s (%s)</strong>: %s<br>", stock.Name, stock.Symbol, FormatBalance(stock.Value))
 	} // This turns the stock data into a string - because we had issues with go templates
 

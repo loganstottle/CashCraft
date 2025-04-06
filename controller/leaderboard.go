@@ -5,6 +5,7 @@ import (
 	"html/template"
 
 	"fmt"
+	"sort"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -23,42 +24,27 @@ func GetLeaderboard(c *fiber.Ctx) error {
 	var users []model.User
 	model.DB.Find(&users)
 
-	// sort users (array of model.User) by their value of i.Cash (where i is an individual iteration of model.User looped through)
-	// users[0], users[1] = users[1], users[0]
-	for i := 0; i < len(users)-2; i++ {
-		for j := i + 1; j < len(users)-1; j++ {
-			x, _ := users[i].ValuateStocks()
-			y, _ := users[j].ValuateStocks()
-			// fmt.Printf("%f > %f\n", y + users[j].Cash, x + users[i].Cash)
-			if y+users[j].Cash > x+users[i].Cash {
-				users[i], users[j] = users[j], users[i]
-			}
-		}
-	}
+	users = users[:10]
 
-	// for i := 0; i < n - 1; i++ {
-	// 	for j := 0; j < n - i - 1; j++ {
-	// 		if users[j].Cash > users[j + 1].Cash {
-	// 			users[j], users[j + 1] = users[j + 1], users[j]
-	// 		}
-	// 	}
-	// }
+	// sort users (array of model.User) by their value of i.Cash (where i is an individual iteration of model.User looped through)
+	sort.Slice(users, func(i, j int) bool {
+		return (users[j].Cash + users[j].ValuateStocks()) < (users[i].Cash + users[i].ValuateStocks())
+	})
 
 	for i, v := range users {
+		leaderboard += fmt.Sprintf("<span class=\"number\">%d.</span> ", i+1)
 		switch i {
 		case 0:
-			leaderboard += "<span style=\"color: goldenrod\">"
+			leaderboard += "<span class=\"name\" style=\"color: goldenrod\">"
 		case 1:
-			leaderboard += "<span style=\"color: grey\">"
+			leaderboard += "<span class=\"name\" style=\"color: grey\">"
 		case 2:
-			leaderboard += "<span style=\"color: saddlebrown\">"
+			leaderboard += "<span class=\"name\" style=\"color: saddlebrown\">"
 		default:
-			leaderboard += "<span>"
+			leaderboard += "<span class=\"name\" style=\"number\">"
 		}
-		leaderboard += fmt.Sprintf("%d. ", i+1)
-		leaderboard += v.Username + "</span><span>: "
-		x, _ := v.ValuateStocks()
-		leaderboard += fmt.Sprintf("%s (%s)", FormatBalance(v.Cash), FormatBalance(x+v.Cash))
+		leaderboard += v.Username + "</span> - "
+		leaderboard += fmt.Sprintf("<span class=\"stock\">%s</span>", FormatBalance(v.Cash+v.ValuateStocks()))
 		leaderboard += "<br>"
 	}
 
