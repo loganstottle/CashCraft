@@ -48,14 +48,14 @@ func GetLogin(c *fiber.Ctx) error {
 func RegisterHandler(c *fiber.Ctx) error {
 	var input LoginInput
 	if err := c.BodyParser(&input); err != nil { // Checks that the user input does not have an error when parsed
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid input"}) // If error, tell them the input was incorrect
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Malformed input."}) // If error, tell them the input was incorrect
 	}
 
 	var user model.User
 
 	// Prevents multiple accounts with the same username
 	if err := model.DB.First(&user, "username = ?", input.Username).Error; err == nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Account already exists"})
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Account already exists."})
 	}
 
 	user.Username = input.Username
@@ -87,22 +87,22 @@ func RegisterHandler(c *fiber.Ctx) error {
 		SameSite: "Strict", // No other sites can steal the cookie (we don't want walmart.com to steal your login info)
 	})
 
-	return c.JSON(fiber.Map{"message": "Logged in!"}) // This means everything has worked!
+	return c.Redirect("/") // This means everything has worked!
 }
 
 func LoginHandler(c *fiber.Ctx) error {
 	var input LoginInput
 	if err := c.BodyParser(&input); err != nil { //  Again, just checks and makes sure user input is valid
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Invalid input"})
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Malformed input."})
 	}
 
 	var user model.User
 	if err := model.DB.First(&user, "username = ?", input.Username).Error; err != nil { // Checks that a user exists with that username
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid credentials"})
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid username or password!"})
 	}
 
 	if user.Password != model.HashPassword(input.Password) { // Checks that the users hashed password matches with the hashed input password
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid credentials"})
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid username or password!"})
 	}
 
 	sessionToken := uuid.New().String() // New login on a new device, we make a new session token
@@ -125,7 +125,7 @@ func LoginHandler(c *fiber.Ctx) error {
 		SameSite: "Strict", // No other sites can steal the cookie (we don't want walmart.com to steal your login info)
 	})
 
-	return c.JSON(fiber.Map{"message": "Logged in!"}) // Everything has worked!
+	return c.Redirect("/") // Everything has worked!
 }
 
 /*
@@ -144,7 +144,7 @@ func LogoutHandler(c *fiber.Ctx) error { // This is really smart, originally we 
 	// We still do delete the cookies though
 	c.ClearCookie("username")
 	c.ClearCookie("session_token")
-	return c.JSON(fiber.Map{"message": "Logged out"})
+	return c.Redirect("/login")
 }
 
 func MeHandler(c *fiber.Ctx) error { // Basic function to return info about yourself

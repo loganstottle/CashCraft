@@ -10,7 +10,7 @@ import (
 
 func FormatBalance(amount float64) string {
 	var result string
-	balance_str := fmt.Sprintf("%.2f", (amount - 0.005)) // This looks weird, but prevents rounding up
+	balance_str := fmt.Sprintf("%.2f", amount) // This looks weird, but prevents rounding up
 	// This doesn't steal money, it just shows you have your amount, or your amount but smaller by one cent
 
 	if amount < 1000 {
@@ -46,11 +46,14 @@ func GetHome(c *fiber.Ctx) error {
 		stocksData += fmt.Sprintf("<strong>%s (%s)</strong>: %s<br>", stock.Name, stock.Symbol, FormatBalance(stock.Value))
 	} // This turns the stock data into a string - because we had issues with go templates
 
-	stockValuation, _ := user.ValuateStocks()
+	cashBalance := user.Cash
+	netWorth, _ := user.ValuateStocks()
+	netWorth += cashBalance
+
 	return c.Render("./view/home/index.html", fiber.Map{ // Data that we feed into the home page
-		"Username":       user.Username,
-		"Balance":        FormatBalance(user.Cash),
-		"StockValuation": FormatBalance(stockValuation),
-		"StocksData":     stocksData,
+		"Username":    user.Username,
+		"NetWorth":    FormatBalance(netWorth),
+		"CashBalance": FormatBalance(cashBalance),
+		"StocksData":  stocksData,
 	})
 }

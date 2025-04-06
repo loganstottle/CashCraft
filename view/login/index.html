@@ -3,31 +3,31 @@
     <head>
         <link rel="icon" type="image/png" href="../logo.png"/>
         <title>CashCraft - Login</title>
+        <link rel="stylesheet" href="/login/style.css" />
+        <script src="/login/index.js" defer></script>
     </head>
-
     <body>
         <div class="login-form">
             <h2>Login</h2>
             <p>No account? Register <a href="/register"">here</a>.</p>
-            <form action="/login" method="POST">
-                <label for="username">Username:</label>
-                <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    placeholder="John Doe"
-                    required
-                /><br />
-                <label for="password">Password:</label>
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="******"
-                    required
-                /><br /><br>
-                <button type="submit">Login</button>
-            </form>
+            <p id="err"></p>
+            <label for="username">Username:</label>
+            <input
+                type="text"
+                id="username"
+                name="username"
+                placeholder="John Doe"
+                required
+            /><br />
+            <label for="password">Password:</label>
+            <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="******"
+                required
+            /><br /><br>
+            <button id="submit">Login</button>
         </div>
     </body>
 </html>
