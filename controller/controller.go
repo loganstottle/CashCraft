@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/template/html/v2"
 	"github.com/joho/godotenv" // I promise I will not leak an API key, I promise I will not leak an API key, I promise I will not leak an API key
 )
 
@@ -26,7 +27,7 @@ If you are on the prod dev team, reach out to the ginger via email or discord
 func StartServer() {
 	model.ConnectDatabase() // Model to connect to the database (We love MVC!)
 
-	app := fiber.New() // Initialize the fiber app
+	app := fiber.New(fiber.Config{Views: html.New("./view", ".html")}) // Initialize the fiber app
 
 	SetupHomeRoutes(app) // Nice organization to keep the routes in seperate files (less merge errors)
 	SetupAuthRoutes(app) // Other halve of the routes

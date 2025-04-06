@@ -31,26 +31,25 @@ func (u *User) ValuateStocks() (float64, error) {
 	return value, nil
 }
 
-// func (u *User) GetStock(symbol string) (Stock, error) {
-	// for _, stock := range u.Stocks {
-	// 	if stock.Symbol == symbol {
-	// 		return stock, nil
-	// 	}
-	// }
+func (u *User) GetStock(symbol string) float64 {
+	stock := Stock{}
+	if err := DB.First(&stock, "owner_id = ?", u.ID).Error; err != nil {
+		return 0
+	}
 
-	// return Stock{}, errors.New("no stock exists")
-// }
+	return stock.Amount
+}
 
 // func (u *User) SetStock(stock Stock) error {
-	// for i, s := range u.Stocks {
-	// 	if s.Symbol == stock.Symbol {
-	// 		u.Stocks[i].Amount = stock.Amount
-	// 		fmt.Println(u.Stocks[i].Amount)
-	// 		return nil
-	// 	}
-	// }
+// 	for i, s := range u.Stocks {
+// 		if s.Symbol == stock.Symbol {
+// 			u.Stocks[i].Amount = stock.Amount
+// 			fmt.Println(u.Stocks[i].Amount)
+// 			return nil
+// 		}
+// 	}
 
-	// return errors.New("no stock exists")
+// 	return errors.New("no stock exists")
 // }
 
 func (u *User) Buy(stockSymbol string, dollars float64) error {
@@ -69,8 +68,8 @@ func (u *User) Buy(stockSymbol string, dollars float64) error {
 	stock := Stock{}
 	if err := DB.First(&stock, "owner_id = ?", u.ID).Error; err != nil {
 		stock := Stock{
-			Symbol: stockSymbol,
-			Amount: dollars / sp.Value,
+			Symbol:  stockSymbol,
+			Amount:  dollars / sp.Value,
 			OwnerID: u.ID,
 		}
 

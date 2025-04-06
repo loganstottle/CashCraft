@@ -12,9 +12,9 @@ import (
 	"github.com/robfig/cron/v3"
 )
 
-// To eventually be changed to allow like - the S&P 500 - or any one on the new york stock exchange
-var validStocks = []string{"AAPL", "TSLA", "GOOG", "AMZN"}            // Stocks accepted for everything
-var validStocksNames = []string{"Apple", "Tesla", "Google", "Amazon"} // The names of those stocks
+// To eventually be changed to allow like - the S&P 500 - or any one on the NYSE stock exchange
+var ValidStocks = []string{"AAPL", "TSLA", "GOOG", "AMZN"}            // Stocks accepted for everything
+var ValidStocksNames = []string{"Apple", "Tesla", "Google", "Amazon"} // The names of those stocks
 
 type StockQuote struct { // a struct that holds the current price for a stock
 	CurrentPrice float64 `json:"c"`
@@ -33,30 +33,6 @@ type Stock struct { // We have owner id to tie who owns each one
 	OwnerID uint
 }
 
-func SetupStocks() {
-	c := cron.New()
-	c.AddFunc("*/15 * * * * *", func() {
-		for i, stockSymbol := range validStocks {
-			s := StockPrice{stockSymbol, validStocksNames[i], 0}
-			s.UpdatePrice()
-			if err := DB.First(&s, "symbol = ?", stockSymbol).Error; err != nil {
-				DB.Create(&s)
-			} else {
-				DB.Model(StockPrice{}).Where("symbol = ?", stockSymbol).Update("value", s.Value)
-				DB.Save(&s)
-			}
-		}
-	})
-	c.Start()
-}
-
-func GetStocks() []StockPrice {
-	var stocks []StockPrice
-	DB.Find(&stocks)
-	return stocks
-}
-
-// todo: refresh all values per hour
 func (s *StockPrice) UpdatePrice() error { // API call with lots of error checking to update price of the stock passed into it
 	resp, err := http.Get(fmt.Sprintf("https://finnhub.io/api/v1/quote?symbol=%s&token=%s", s.Symbol, os.Getenv("FINNHUB_API_KEY")))
 	if err != nil {
@@ -85,4 +61,27 @@ func (s *StockPrice) UpdatePrice() error { // API call with lots of error checki
 
 	s.Value = quote.CurrentPrice
 	return nil
+}
+
+func SetupStocks() {
+	c := cron.New()
+	c.AddFunc("*/15 * * * * *", func() {
+		for i, stockSymbol := range ValidStocks {
+			s := StockPrice{stockSymbol, ValidStocksNames[i], 0}
+			s.UpdatePrice()
+			if err := DB.First(&s, "symbol = ?", stockSymbol).Error; err != nil {
+				DB.Create(&s)
+			} else {
+				DB.Model(StockPrice{}).Where("symbol = ?", stockSymbol).Update("value", s.Value)
+				DB.Save(&s)
+			}
+		}
+	})
+	c.Start()
+}
+
+func GetStocks() []StockPrice {
+	var stocks []StockPrice
+	DB.Find(&stocks)
+	return stocks
 }

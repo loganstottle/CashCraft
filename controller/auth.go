@@ -33,7 +33,7 @@ func GetRegister(c *fiber.Ctx) error {
 		return c.Redirect("/")
 	} // This code takes someone who is already logged in and takes them to the home page
 
-	return c.Render("./view/register/index.html", fiber.Map{}) // This is what returns the view to the user
+	return c.Render("register/index", fiber.Map{}) // This is what returns the view to the user
 }
 
 func GetLogin(c *fiber.Ctx) error {
@@ -42,7 +42,7 @@ func GetLogin(c *fiber.Ctx) error {
 		return c.Redirect("/")
 	} // This code takes someone who is already logged in and takes them to the home page
 
-	return c.Render("./view/login/index.html", fiber.Map{})
+	return c.Render("login/index", fiber.Map{})
 }
 
 func RegisterHandler(c *fiber.Ctx) error {

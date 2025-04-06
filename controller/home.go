@@ -2,6 +2,7 @@ package controller
 
 import (
 	"CashCraft/model"
+	"html/template"
 
 	"github.com/gofiber/fiber/v2"
 	//"strconv"
@@ -41,19 +42,22 @@ func GetHome(c *fiber.Ctx) error {
 		return c.Redirect("/login")
 	}
 
-	var stocksData string
-	for _, stock := range model.GetStocks() {
-		stocksData += fmt.Sprintf("<strong>%s (%s)</strong>: %s<br>", stock.Name, stock.Symbol, FormatBalance(stock.Value))
-	} // This turns the stock data into a string - because we had issues with go templates
-
 	cashBalance := user.Cash
 	netWorth, _ := user.ValuateStocks()
 	netWorth += cashBalance
 
-	return c.Render("./view/home/index.html", fiber.Map{ // Data that we feed into the home page
+	var myStockData string
+	var stocksData string
+	for _, stock := range model.GetStocks() {
+		myStockData += fmt.Sprintf("<strong>%s (%s)</strong>: %s (%s)<br>", stock.Name, stock.Symbol, FormatBalance(user.GetStock(stock.Symbol))[1:], FormatBalance(stock.Value*user.GetStock(stock.Symbol)))
+		stocksData += fmt.Sprintf("<strong>%s (%s)</strong>: %s<br>", stock.Name, stock.Symbol, FormatBalance(stock.Value))
+	} // This turns the stock data into a string - because we had issues with go templates
+
+	return c.Render("home/index", fiber.Map{ // Data that we feed into the home page
 		"Username":    user.Username,
 		"NetWorth":    FormatBalance(netWorth),
 		"CashBalance": FormatBalance(cashBalance),
-		"StocksData":  stocksData,
+		"StocksData":  template.HTML(stocksData),
+		"MyStocks":    template.HTML(myStockData),
 	})
 }
