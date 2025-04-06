@@ -25,7 +25,6 @@ func (u *User) ValuateStocks() (float64, error) {
 		if err := DB.First(&sp, "symbol = ?", stock.Symbol).Error; err != nil {
 			return -1, errors.New("Trying to evaluate nonexistent stock")
 		}
-		fmt.Println(stock.Amount * sp.Value)
 		value += stock.Amount * sp.Value
 	}
 
@@ -55,6 +54,10 @@ func (u *User) ValuateStocks() (float64, error) {
 // }
 
 func (u *User) Buy(stockSymbol string, dollars float64) error {
+	if u.Cash <= dollars {
+		return errors.New("Player is too broke")
+	}
+
 	sp := StockPrice{}
 	if err := DB.First(&sp, "symbol = ?", stockSymbol).Error; err != nil {
 		fmt.Printf("Trying to buy unknown stock.\n")

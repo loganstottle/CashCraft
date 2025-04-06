@@ -42,7 +42,7 @@ func GetHome(c *fiber.Ctx) error {
 	}
 
 	var stocksData string
-	for _, stock := range model.SetupStocks() {
+	for _, stock := range model.GetStocks() {
 		stocksData += fmt.Sprintf("<strong>%s (%s)</strong>: %s<br>", stock.Name, stock.Symbol, FormatBalance(stock.Value))
 	} // This turns the stock data into a string - because we had issues with go templates
 
