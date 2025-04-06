@@ -11,23 +11,24 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-var validStocks = []string{"AAPL", "TSLA", "GOOG", "AMZN"}
-var validStocksNames = []string{"Apple", "Tesla", "Google", "Amazon"}
+// To eventually be changed to allow like - the S&P 500 - or any one on the new york stock exchange
+var validStocks = []string{"AAPL", "TSLA", "GOOG", "AMZN"}            // Stocks accepted for everything
+var validStocksNames = []string{"Apple", "Tesla", "Google", "Amazon"} // The names of those stocks
 
-type StockQuote struct {
+type StockQuote struct { // a struct that holds the current price for a stock
 	CurrentPrice float64 `json:"c"`
 }
 
-type StockPrice struct {
+type StockPrice struct { // a struct that holds the stocks symbol, name, and cost
 	Symbol string `json:"symbol"`
 	Name   string
 	Value  float64 `json:"value"`
 }
 
-type Stock struct {
+type Stock struct { // We have owner id to tie who owns each one
 	gorm.Model
-	Symbol string
-	Amount float64 `json:"amount"`
+	Symbol  string
+	Amount  float64 `json:"amount"`
 	OwnerID uint
 }
 
@@ -46,18 +47,17 @@ func SetupStocks() []StockPrice {
 		}
 	}
 
+	// DELETE THIS LATER!!!!!!!
 	u := User{}
 	DB.First(&u, "username = ?", "test")
-
 	u.Buy("AAPL", 1000)
-
-	// fmt.Println(u.ValuateStocks())
+	// DONT FORGET!!!!!!!
 
 	return stocks
 }
 
 // todo: refresh all values per hour
-func (s *StockPrice) UpdatePrice() error {
+func (s *StockPrice) UpdatePrice() error { // API call with lots of error checking to update price of the stock passed into it
 	resp, err := http.Get(fmt.Sprintf("https://finnhub.io/api/v1/quote?symbol=%s&token=%s", s.Symbol, os.Getenv("FINNHUB_API_KEY")))
 	if err != nil {
 		fmt.Printf("Failed to make GET request: %v\n", err)
