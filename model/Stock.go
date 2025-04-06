@@ -47,12 +47,6 @@ func SetupStocks() []StockPrice {
 		}
 	}
 
-	// DELETE THIS LATER!!!!!!!
-	u := User{}
-	DB.First(&u, "username = ?", "test")
-	u.Buy("AAPL", 1000)
-	// DONT FORGET!!!!!!!
-
 	return stocks
 }
 
