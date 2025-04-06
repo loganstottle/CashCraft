@@ -1,6 +1,7 @@
 package model
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/jinzhu/gorm"
@@ -8,41 +9,50 @@ import (
 
 type User struct {
 	gorm.Model
-	ID           int     `json:"userid"`
 	Username     string  `json:"username"`
 	Password     string  `json:"password"`
 	Cash         float64 `json:"cash"`
-	Stocks       []Stock `json:"stocks"`
 	SessionToken string  `json:"session_token"`
 }
 
-func (u *User) ValuateStocks() float64 {
+func (u *User) ValuateStocks() (float64, error) {
 	var value float64 = 0
 
-	for _, stock := range u.Stocks {
-		s := StockPrice{}
-		if err := DB.First(&s, "symbol = ?", stock.Symbol).Error; err != nil {
-			fmt.Printf("Failed to valuate stocks for user %s: %s\n", u.Username, err)
-			continue
+	var stocks []Stock
+	DB.Where("owner_id = ?", u.ID).Find(&stocks)
+	for _, stock := range stocks {
+		sp := StockPrice{}
+		if err := DB.First(&sp, "symbol = ?", stock.Symbol).Error; err != nil {
+			return -1, errors.New("Trying to evaluate nonexistent stock")
 		}
-
-		fmt.Println(s.Value, stock.Amount)
-
-		value += s.Value * stock.Amount
+		fmt.Println(stock.Amount * sp.Value)
+		value += stock.Amount * sp.Value
 	}
 
-	return value
+	return value, nil
 }
 
-func (u *User) HasStock(symbol string) bool {
-	for _, stock := range u.Stocks {
-		if stock.Symbol == symbol {
-			return true
-		}
-	}
+// func (u *User) GetStock(symbol string) (Stock, error) {
+	// for _, stock := range u.Stocks {
+	// 	if stock.Symbol == symbol {
+	// 		return stock, nil
+	// 	}
+	// }
 
-	return false
-}
+	// return Stock{}, errors.New("no stock exists")
+// }
+
+// func (u *User) SetStock(stock Stock) error {
+	// for i, s := range u.Stocks {
+	// 	if s.Symbol == stock.Symbol {
+	// 		u.Stocks[i].Amount = stock.Amount
+	// 		fmt.Println(u.Stocks[i].Amount)
+	// 		return nil
+	// 	}
+	// }
+
+	// return errors.New("no stock exists")
+// }
 
 func (u *User) Buy(stockSymbol string, dollars float64) error {
 	sp := StockPrice{}
@@ -53,22 +63,21 @@ func (u *User) Buy(stockSymbol string, dollars float64) error {
 
 	u.Cash -= dollars
 
-	if !u.HasStock(stockSymbol) {
+	stock := Stock{}
+	if err := DB.First(&stock, "owner_id = ?", u.ID).Error; err != nil {
+		stock := Stock{
+			Symbol: stockSymbol,
+			Amount: dollars / sp.Value,
+			OwnerID: u.ID,
+		}
 
-		return nil
+		DB.Create(&stock)
+	} else {
+		stock.Amount += dollars / sp.Value
+		DB.Save(&stock)
 	}
 
-	// user.Cash -= dollars
-	// s.Amount += dollars / sp.Value
+	DB.Save(u)
 
-	// if !user.HasStock(s.Symbol) {
-	// 	s.UserID = user.ID
-	// 	user.Stocks = append(user.Stocks, *s)
-	// 	DB.Save(&user)
-	// 	DB.Create(&s)
-	// } else {
-	// 	DB.Update("stocks", &s)
-	// }
-
-	// return nil
+	return nil
 }
