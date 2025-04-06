@@ -9,6 +9,7 @@ import (
 	"os"
 
 	"github.com/jinzhu/gorm"
+	"github.com/robfig/cron/v3"
 )
 
 // To eventually be changed to allow like - the S&P 500 - or any one on the new york stock exchange
@@ -32,21 +33,26 @@ type Stock struct { // We have owner id to tie who owns each one
 	OwnerID uint
 }
 
-func SetupStocks() []StockPrice {
-	var stocks []StockPrice
-
-	for i, stockSymbol := range validStocks {
-		s := StockPrice{stockSymbol, validStocksNames[i], 0}
-		s.UpdatePrice()
-		stocks = append(stocks, s)
-		if err := DB.First(&s, "symbol = ?", stockSymbol).Error; err != nil {
-			DB.Create(&s)
-		} else {
-			DB.Model(StockPrice{}).Where("symbol = ?", stockSymbol).Update("value", s.Value)
-			DB.Save(&s)
+func SetupStocks() {
+	c := cron.New()
+	c.AddFunc("*/15 * * * * *", func() {
+		for i, stockSymbol := range validStocks {
+			s := StockPrice{stockSymbol, validStocksNames[i], 0}
+			s.UpdatePrice()
+			if err := DB.First(&s, "symbol = ?", stockSymbol).Error; err != nil {
+				DB.Create(&s)
+			} else {
+				DB.Model(StockPrice{}).Where("symbol = ?", stockSymbol).Update("value", s.Value)
+				DB.Save(&s)
+			}
 		}
-	}
+	})
+	c.Start()
+}
 
+func GetStocks() []StockPrice {
+	var stocks []StockPrice
+	DB.Find(&stocks)
 	return stocks
 }
 

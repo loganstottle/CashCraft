@@ -31,5 +31,6 @@ func StartServer() {
 	SetupHomeRoutes(app)           // Nice organization to keep the routes in seperate files (less merge errors)
 	SetupAuthRoutes(app)           // Other halve of the routes
 	app.Static("/*", "./view/404") // For if someone puts in a wrong link (We are not case sensitive though - ease of use)
+	model.SetupStocks()
 	app.Listen(":3000")            // Starts the server to where people can connect to it
 }
