@@ -28,8 +28,6 @@ type Stock struct {
 	gorm.Model
 	Symbol string
 	Amount float64 `json:"amount"`
-	UserID int     // foreign key GORM requirement
-	User   User    `gorm:"foreignKey:UserID"`
 }
 
 func SetupStocks() []StockPrice {
