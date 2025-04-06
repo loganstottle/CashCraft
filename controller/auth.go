@@ -12,12 +12,24 @@ type LoginInput struct { // This defines a struct for username and password, to 
 	Password string `json:"password"`
 }
 
+type BuyInput struct {
+	Symbol  string
+	Dollars float64
+}
+
+type SellInput struct {
+	Symbol string
+	Amount float64
+}
+
 func SetupAuthRoutes(app *fiber.App) { // This connects the different subdomains of the sites to functions that distribute the views
-	app.Get("/register", GetRegister)         //         Grabs the registration website
-	app.Get("/login", GetLogin)               //               Grabs the login website
-	app.Post("/register", RegisterHandler)    //    Allows user to request a new account
-	app.Post("/login", LoginHandler)          //          Lets the user attempt to login
-	app.Post("/logout", LogoutHandler)        //        Lets the user logout of their session
+	app.Get("/register", GetRegister)      //         Grabs the registration website
+	app.Get("/login", GetLogin)            //               Grabs the login website
+	app.Post("/register", RegisterHandler) //    Allows user to request a new account
+	app.Post("/login", LoginHandler)       //          Lets the user attempt to login
+	app.Post("/logout", LogoutHandler)     //        Lets the user logout of their session
+	app.Post("/buy", BuyHandler)
+	app.Post("/sell", SellHandler)
 	app.Get("/me", AuthMiddleware, MeHandler) // *TODO*
 }
 
@@ -153,4 +165,40 @@ func MeHandler(c *fiber.Ctx) error { // Basic function to return info about your
 		"id":       user.ID,
 		"username": user.Username,
 	})
+}
+
+func BuyHandler(c *fiber.Ctx) error {
+	var input BuyInput
+	if err := c.BodyParser(&input); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Malformed input."})
+	}
+
+	var user model.User
+	if err := model.DB.First(&user, "username = ? and session_token = ?", c.Cookies("username"), c.Cookies("session_token")).Error; err != nil {
+		return c.Status(401).SendString("Not authorized")
+	}
+
+	if user.Cash < input.Dollars {
+		return c.Status(400).SendString("Too broke")
+	}
+
+	user.Buy(input.Symbol, input.Dollars)
+
+	return nil
+}
+
+func SellHandler(c *fiber.Ctx) error {
+	var input SellInput
+	if err := c.BodyParser(&input); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "Malformed input."})
+	}
+
+	var user model.User
+	if err := model.DB.First(&user, "username = ? and session_token = ?", c.Cookies("username"), c.Cookies("session_token")).Error; err != nil {
+		return c.Status(401).SendString("Not authorized")
+	}
+
+	user.Sell(input.Symbol, input.Amount)
+
+	return nil
 }

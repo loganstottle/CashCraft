@@ -15,25 +15,23 @@ type User struct {
 	SessionToken string  `json:"session_token"`
 }
 
-func (u *User) ValuateStocks() (float64, error) {
+func (u *User) ValuateStocks() float64 {
 	var value float64 = 0
 
 	var stocks []Stock
 	DB.Where("owner_id = ?", u.ID).Find(&stocks)
 	for _, stock := range stocks {
 		sp := StockPrice{}
-		if err := DB.First(&sp, "symbol = ?", stock.Symbol).Error; err != nil {
-			return -1, errors.New("Trying to evaluate nonexistent stock")
-		}
+		DB.First(&sp, "symbol = ?", stock.Symbol)
 		value += stock.Amount * sp.Value
 	}
 
-	return value, nil
+	return value
 }
 
 func (u *User) GetStock(symbol string) float64 {
 	stock := Stock{}
-	if err := DB.First(&stock, "owner_id = ?", u.ID).Error; err != nil {
+	if err := DB.First(&stock, "owner_id = ? and symbol = ?", u.ID, symbol).Error; err != nil {
 		return 0
 	}
 
@@ -41,6 +39,8 @@ func (u *User) GetStock(symbol string) float64 {
 }
 
 func (u *User) Buy(stockSymbol string, dollars float64) error {
+	fmt.Println(stockSymbol)
+
 	if u.Cash <= dollars {
 		return errors.New("Player is too broke")
 	}
@@ -54,19 +54,19 @@ func (u *User) Buy(stockSymbol string, dollars float64) error {
 	u.Cash -= dollars
 
 	stock := Stock{}
-	if err := DB.First(&stock, "owner_id = ?", u.ID).Error; err != nil {
-		stock := Stock{
+	if err := DB.First(&stock, "owner_id = ? AND symbol = ?", u.ID, stockSymbol).Error; err != nil {
+		stock = Stock{
 			Symbol:  stockSymbol,
 			Amount:  dollars / sp.Value,
 			OwnerID: u.ID,
 		}
-
-		DB.Create(&stock)
 	} else {
+		fmt.Println(stock.Amount)
 		stock.Amount += dollars / sp.Value
-		DB.Save(&stock)
+		fmt.Println(stock.Amount)
 	}
 
+	DB.Save(&stock)
 	DB.Save(u)
 
 	return nil
@@ -82,7 +82,7 @@ func (u *User) Sell(stockSymbol string, stockAmount float64) error {
 	u.Cash += stockAmount * sp.Value
 
 	stock := Stock{}
-	if err := DB.First(&stock, "owner_id = ?", u.ID).Error; err != nil {
+	if err := DB.First(&stock, "owner_id = ? AND symbol = ?", u.ID, stockSymbol).Error; err != nil {
 		fmt.Printf("Trying to sell unowned stock\n")
 		return err
 	}
