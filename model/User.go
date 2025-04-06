@@ -40,18 +40,6 @@ func (u *User) GetStock(symbol string) float64 {
 	return stock.Amount
 }
 
-// func (u *User) SetStock(stock Stock) error {
-// 	for i, s := range u.Stocks {
-// 		if s.Symbol == stock.Symbol {
-// 			u.Stocks[i].Amount = stock.Amount
-// 			fmt.Println(u.Stocks[i].Amount)
-// 			return nil
-// 		}
-// 	}
-
-// 	return errors.New("no stock exists")
-// }
-
 func (u *User) Buy(stockSymbol string, dollars float64) error {
 	if u.Cash <= dollars {
 		return errors.New("Player is too broke")

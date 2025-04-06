@@ -64,18 +64,22 @@ func (s *StockPrice) UpdatePrice() error { // API call with lots of error checki
 }
 
 func SetupStocks() {
+	for i, stockSymbol := range ValidStocks {
+		s := StockPrice{stockSymbol, ValidStocksNames[i], 0}
+		s.UpdatePrice()
+		if err := DB.First(&s, "symbol = ?", stockSymbol).Error; err != nil {
+			DB.Create(&s)
+		} else {
+			DB.Model(StockPrice{}).Where("symbol = ?", stockSymbol).Update("value", s.Value)
+			DB.Save(&s)
+		}
+	}
+}
+
+func SetupStocksCron() {
 	c := cron.New()
 	c.AddFunc("*/15 * * * * *", func() {
-		for i, stockSymbol := range ValidStocks {
-			s := StockPrice{stockSymbol, ValidStocksNames[i], 0}
-			s.UpdatePrice()
-			if err := DB.First(&s, "symbol = ?", stockSymbol).Error; err != nil {
-				DB.Create(&s)
-			} else {
-				DB.Model(StockPrice{}).Where("symbol = ?", stockSymbol).Update("value", s.Value)
-				DB.Save(&s)
-			}
-		}
+		SetupStocks()
 	})
 	c.Start()
 }
