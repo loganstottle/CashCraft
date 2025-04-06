@@ -11,8 +11,7 @@ import (
 
 func FormatBalance(amount float64) string {
 	var result string
-	balance_str := fmt.Sprintf("%.2f", amount) // This looks weird, but prevents rounding up
-	// This doesn't steal money, it just shows you have your amount, or your amount but smaller by one cent
+	balance_str := fmt.Sprintf("%.2f", amount)
 
 	if amount < 1000 {
 		return "$" + balance_str // If you don't have one thousand dollar, commas are not needed
@@ -42,6 +41,7 @@ func GetHome(c *fiber.Ctx) error {
 		return c.Redirect("/login")
 	}
 
+	// This code is used to calculate the net worth of the user
 	cashBalance := user.Cash
 	netWorth, _ := user.ValuateStocks()
 	netWorth += cashBalance
