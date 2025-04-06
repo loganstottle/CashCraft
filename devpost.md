@@ -19,18 +19,19 @@ Challenges for this Hackathon came from the massive amount of data we needed to 
   * This year we all had great ideas - and determining which ones to use was important
   * We all have different aesthetic takes for front end work
   * We use three different linux distros and one windows machine - why dockerizing is also on the todo list
+
 # Proud Accomplishments
 This is our first hackathon app in which the app completely works. We genuinely plan to use this app with our friend in the calculus class - and are aiming to have actual users for the app. Everything inside of this app is intended to have high scalability, so we have no concerns if the app was to actually take off. We all learned completely new technologies for this app, and contributed to the overall success of the team.
 # What We Learned
 * Nate
   * While having some minor experience in GO, he never had used it for webservers before. Over the course of the project he worked on the fiber backend for the app.
-  * He started to work on the front end - compared to his normal passion for command line applications.
+  * Nate also started to work on the front end, giving him more appriciation for the effort it requires, coming from his passion for command line applications.
 * Gabe
   * Gabe had never coded in GO, but he has gone through commenting the code written by team mates to both further his own understanding and make the project more readable.
   * Gabe built upon his front end knowledge from last HackKU designing our entire front end - and we are proud of how great it looks
 * Nick
-  * GO Templates
-  * MySql with GORM
+  * Nick, while being an amazing C programmer, had very little experince in GO, especially with their templates library. He spent a lot of time working with it to be able to properly serve info to the users of the app
+  * MySql with GORM as a database was a great idea, and we made it work - but it also was something we hadn't used before. Nick got it to work and it saw read speeds much faster that Sqlite (What we had already known)
 * Logan
-  * GO Templates as well
-  * Interacting with a database
+  * GO Fiber was Logan's biggest educational experience, being a fully new framework. He appriciated the fact that it was similar to 
+  * Interacting with a sql based database was also new for Logan. He is a big MongoDB fan, and not to hate on it, we wanted to have this app be as fast as possible
