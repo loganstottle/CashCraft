@@ -74,7 +74,7 @@ func (s *StockPrice) UpdatePrice() error { // API call with lots of error checki
 func (sp *StockPrice) GenerateStatusString() string {
 	var emoji string
 
-	if sp.DailyChange < 0 {
+	if sp.DailyChange > 0 {
 		emoji = "📈"
 	} else {
 		emoji = "📉"
