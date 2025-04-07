@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math"
 	"net/http"
 	"os"
 
@@ -17,14 +18,18 @@ var ValidStocks = []string{"AAPL", "TSLA", "GOOG", "AMZN", "NVDA", "MSFT", "META
 var ValidStocksNames = []string{"Apple", "Tesla", "Google", "Amazon", "Nvidia", "Microsoft", "Meta", "Costco", "Disney", "Netflix", "Palantir", "Walmart", "Visa", "Mastercard", "Coca-Cola", "McDonald's", "PepsiCo", "Adobe"} // The names of those stocks
 
 type StockQuote struct { // a struct that holds the current price for a stock
-	CurrentPrice float64 `json:"c"`
+	Change        float64 `json:"d"`
+	ChangePercent float64 `json:"dp"`
+	CurrentPrice  float64 `json:"c"`
 }
 
 type StockPrice struct { // a struct that holds the stocks symbol, name, and cost
-	Symbol string `json:"symbol"`
-	Name   string
-	Value  float64 `json:"value"`
-	ID     uint    `gorm:"primary_key" json:"id"`
+	Symbol             string `json:"symbol"`
+	Name               string
+	Value              float64 `json:"value"`
+	DailyChange        float64 `json:"daily_change"`
+	DailyChangePercent float64 `json:"daily_change_percent"`
+	ID                 uint    `gorm:"primary_key" json:"id"`
 }
 
 type Stock struct { // We have owner id to tie who owns each one
@@ -61,7 +66,21 @@ func (s *StockPrice) UpdatePrice() error { // API call with lots of error checki
 	}
 
 	s.Value = quote.CurrentPrice
+	s.DailyChange = quote.Change
+	s.DailyChangePercent = quote.ChangePercent
 	return nil
+}
+
+func (sp *StockPrice) GenerateStatusString() string {
+	var emoji string
+
+	if sp.DailyChange < 0 {
+		emoji = "📈"
+	} else {
+		emoji = "📉"
+	}
+
+	return fmt.Sprintf("%s $%.2f %.2f%%", emoji, math.Abs(sp.DailyChange), math.Abs(sp.DailyChangePercent))
 }
 
 func SetupStocks() {
@@ -82,7 +101,7 @@ func SetupStocks() {
 
 func SetupStocksCron() {
 	c := cron.New()
-	c.AddFunc("@every 5m", SetupStocks)
+	c.AddFunc("@every 1m", SetupStocks)
 	c.Start()
 }
 
