@@ -24,6 +24,7 @@ type StockPrice struct { // a struct that holds the stocks symbol, name, and cos
 	Symbol string `json:"symbol"`
 	Name   string
 	Value  float64 `json:"value"`
+	ID     uint    `gorm:"primary_key" json:"id"`
 }
 
 type Stock struct { // We have owner id to tie who owns each one
@@ -65,14 +66,15 @@ func (s *StockPrice) UpdatePrice() error { // API call with lots of error checki
 
 func SetupStocks() {
 	for i, stockSymbol := range ValidStocks {
-		market_value := StockPrice{stockSymbol, ValidStocksNames[i], 0}
-		market_value.UpdatePrice()
-		s := StockPrice{}
+		var s StockPrice
 		if err := DB.First(&s, "symbol = ?", stockSymbol).Error; err != nil {
-			DB.Create(&market_value)
-		} else {
-			DB.Model(&s).Where("symbol = ?", stockSymbol).Update("value", market_value.Value)
+			s.Symbol = stockSymbol
+			s.Name = validStocksNames[i]
+			DB.Create(&s)
 		}
+
+		s.UpdatePrice()
+		DB.Save(&s)
 	}
 }
 
