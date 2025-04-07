@@ -69,7 +69,7 @@ func SetupStocks() {
 		var s StockPrice
 		if err := DB.First(&s, "symbol = ?", stockSymbol).Error; err != nil {
 			s.Symbol = stockSymbol
-			s.Name = validStocksNames[i]
+			s.Name = ValidStocksNames[i]
 			DB.Create(&s)
 		}
 
