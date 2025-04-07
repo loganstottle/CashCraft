@@ -65,13 +65,13 @@ func (s *StockPrice) UpdatePrice() error { // API call with lots of error checki
 
 func SetupStocks() {
 	for i, stockSymbol := range ValidStocks {
-		s := StockPrice{stockSymbol, ValidStocksNames[i], 0}
-		s.UpdatePrice()
+		market_value := StockPrice{stockSymbol, ValidStocksNames[i], 0}
+		market_value.UpdatePrice()
+		s := StockPrice{}
 		if err := DB.First(&s, "symbol = ?", stockSymbol).Error; err != nil {
-			DB.Create(&s)
+			DB.Create(&market_value)
 		} else {
-			DB.Model(StockPrice{}).Where("symbol = ?", stockSymbol).Update("value", s.Value)
-			DB.Save(&s)
+			DB.Model(&s).Where("symbol = ?", stockSymbol).Update("value", market_value.Value)
 		}
 	}
 }
