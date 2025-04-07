@@ -98,9 +98,7 @@ func (u *User) Sell(stockSymbol string, stockAmount float64) error {
 	// 	return nil
 	// }
 
-	if stock.Amount < stockAmount {
-		return errors.New("Sale exceeds amount owned")
-	}
+	stockAmount = min(stockAmount, stock.Amount)
 
 	u.Cash += stockAmount * sp.Value
 	stock.Amount -= stockAmount

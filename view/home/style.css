@@ -113,10 +113,12 @@ body {
 }
 
 .buy {
+    cursor: pointer;
     background: #2e2;
 }
 
 .sell {
+    cursor: pointer;
     background: #f22;
 }
 
