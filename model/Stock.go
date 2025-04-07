@@ -76,13 +76,13 @@ func SetupStocks() {
 		s.UpdatePrice()
 		DB.Save(&s)
 	}
+
+	fmt.Println("stocks updated")
 }
 
 func SetupStocksCron() {
 	c := cron.New()
-	c.AddFunc("*/15 * * * * *", func() {
-		SetupStocks()
-	})
+	c.AddFunc("@every 5m", SetupStocks)
 	c.Start()
 }
 
