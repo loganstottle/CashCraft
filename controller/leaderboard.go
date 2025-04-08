@@ -22,16 +22,23 @@ func GetLeaderboard(c *fiber.Ctx) error {
 
 	var leaderboard string
 	var users []model.User
+	var filteredUsers []model.User
 	model.DB.Find(&users)
 
-	users = users[:10]
+	for _, user := range users {
+		if user.Cash != 100_000 {
+			filteredUsers = append(filteredUsers, user)
+		}
+	}
+
+	filteredUsers = filteredUsers[:10]
 
 	// sort users (array of model.User) by their value of i.Cash (where i is an individual iteration of model.User looped through)
-	sort.Slice(users, func(i, j int) bool {
-		return (users[j].Cash + users[j].ValuateStocks()) < (users[i].Cash + users[i].ValuateStocks())
+	sort.Slice(filteredUsers, func(i, j int) bool {
+		return (filteredUsers[j].Cash + filteredUsers[j].ValuateStocks()) < (filteredUsers[i].Cash + filteredUsers[i].ValuateStocks())
 	})
 
-	for i, v := range users {
+	for i, user := range filteredUsers {
 		leaderboard += fmt.Sprintf("<span class=\"number\">%d.</span> ", i+1)
 		switch i {
 		case 0:
@@ -43,8 +50,8 @@ func GetLeaderboard(c *fiber.Ctx) error {
 		default:
 			leaderboard += "<span class=\"name\" style=\"number\">"
 		}
-		leaderboard += v.Username + "</span> - "
-		leaderboard += fmt.Sprintf("<span class=\"stock\">%s</span>", FormatBalance(v.Cash+v.ValuateStocks()))
+		leaderboard += user.Username + "</span> - "
+		leaderboard += fmt.Sprintf("<span class=\"stock\">%s</span>", FormatBalance(user.Cash+user.ValuateStocks()))
 		leaderboard += "<br>"
 	}
 

@@ -39,10 +39,12 @@ func (u *User) GetStock(symbol string) float64 {
 }
 
 func (u *User) Buy(stockSymbol string, dollars float64) error {
-	fmt.Println(stockSymbol)
-
-	if u.Cash <= dollars {
+	if u.Cash < dollars {
 		return errors.New("Player is too broke")
+	}
+
+	if dollars <= 0 {
+		return errors.New("Purchase less than or equivalent to $0")
 	}
 
 	sp := StockPrice{}
@@ -61,9 +63,7 @@ func (u *User) Buy(stockSymbol string, dollars float64) error {
 			OwnerID: u.ID,
 		}
 	} else {
-		fmt.Println(stock.Amount)
 		stock.Amount += dollars / sp.Value
-		fmt.Println(stock.Amount)
 	}
 
 	DB.Save(&stock)
@@ -73,19 +73,34 @@ func (u *User) Buy(stockSymbol string, dollars float64) error {
 }
 
 func (u *User) Sell(stockSymbol string, stockAmount float64) error {
+	if stockAmount < 0 {
+		return errors.New("Sale less than 0 stocks")
+	}
+
 	sp := StockPrice{}
 	if err := DB.First(&sp, "symbol = ?", stockSymbol).Error; err != nil {
 		fmt.Printf("Trying to sell unknown stock.\n")
 		return err
 	}
 
-	u.Cash += stockAmount * sp.Value
-
 	stock := Stock{}
 	if err := DB.First(&stock, "owner_id = ? AND symbol = ?", u.ID, stockSymbol).Error; err != nil {
 		fmt.Printf("Trying to sell unowned stock\n")
 		return err
 	}
+
+	// !!! Does not work !!!
+	// if float64(int(stock.Amount * 1000)) / 1000.0 == stockAmount {
+	// 	u.Cash += stockAmount * sp.Value
+	// 	stock.Amount = 0
+	// 	DB.Save(&stock)
+	// 	DB.Save(u)
+	// 	return nil
+	// }
+
+	stockAmount = min(stockAmount, stock.Amount)
+
+	u.Cash += stockAmount * sp.Value
 	stock.Amount -= stockAmount
 	DB.Save(&stock)
 
