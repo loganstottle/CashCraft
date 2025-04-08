@@ -44,9 +44,19 @@ func GetHome(c *fiber.Ctx) error {
 
 	var myStockData string
 	var stocksData string
+
+	//todo: templates (different engine may have fixed it)
 	for _, stock := range model.GetStocks() {
 		myStockData += fmt.Sprintf("<div class=\"stock-info\"><strong>%s (%s)</strong> <span style=\"color: #666\">-</span> <span style=\"text-decoration: underline\">%.3f</span> shares <span style=\"color: #666\">(%s)</span> <div class=\"btns-container\"><button id=\"buy-%s\" class=\"buy\">Buy</button> <button id=\"sell-%s\" class=\"sell\">Sell</button></div><br></div>", stock.Name, stock.Symbol, user.GetStock(stock.Symbol), FormatBalance(stock.Value*user.GetStock(stock.Symbol)), stock.Symbol, stock.Symbol)
-		stocksData += fmt.Sprintf("<strong>%s (%s)</strong> <span style=\"color: #666\">-</span> %s <span style=\"color: #666\">(%s)</span><br>", stock.Name, stock.Symbol, FormatBalance(stock.Value), stock.GenerateStatusString())
+		stocksData += fmt.Sprintf("<strong>%s (%s)</strong> <span style=\"color: #666\">-</span> ", stock.Name, stock.Symbol)
+
+		if stock.Up() {
+			stocksData += fmt.Sprintf("<span style=\"color: #2e2; font-weight: bold;\">%s</span> ", FormatBalance(stock.Value))
+		} else {
+			stocksData += fmt.Sprintf("<span style=\"color: #f22; font-weight: bold;\">%s</span> ", FormatBalance(stock.Value))
+		}
+
+		stocksData += fmt.Sprintf("<span style=\"color: #666\">(%s)</span><br>", stock.GenerateStatusString())
 	} // This turns the stock data into a string - because we had issues with go templates
 
 	return c.Render("home/index", fiber.Map{ // Data that we feed into the home page
