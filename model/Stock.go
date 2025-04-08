@@ -138,6 +138,7 @@ func SetupStocksCron() {
 	stateCron := cron.New()
 	apiCron := cron.New()
 
+	// TODO: redo crons for non-daylight savings
 	OpenMarket(stateCron, "0 8 * * 1-5") // Standard Market Opening
 	CloseMarket(stateCron, "0 0 * * 1-5") // Standard Market Closing
 
