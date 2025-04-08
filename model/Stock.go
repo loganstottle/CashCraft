@@ -8,6 +8,7 @@ import (
 	"math"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/jinzhu/gorm"
 	"github.com/robfig/cron/v3"
@@ -38,6 +39,8 @@ type Stock struct { // We have owner id to tie who owns each one
 	Amount  float64 `json:"amount"`
 	OwnerID uint
 }
+
+var MarketState bool
 
 func (s *StockPrice) UpdatePrice() error { // API call with lots of error checking to update price of the stock passed into it
 	resp, err := http.Get(fmt.Sprintf("https://finnhub.io/api/v1/quote?symbol=%s&token=%s", s.Symbol, os.Getenv("FINNHUB_API_KEY")))
@@ -78,7 +81,9 @@ func (sp *StockPrice) Up() bool {
 func (sp *StockPrice) GenerateStatusString() string {
 	var emoji string
 
-	if sp.Up() {
+	if MarketState == false {
+		emoji = ""
+	} else if sp.Up() {
 		emoji = "📈"
 	} else {
 		emoji = "📉"
@@ -88,6 +93,9 @@ func (sp *StockPrice) GenerateStatusString() string {
 }
 
 func SetupStocks() {
+	if MarketState == false {
+		return
+	}
 	for i, stockSymbol := range ValidStocks {
 		var s StockPrice
 		if err := DB.First(&s, "symbol = ?", stockSymbol).Error; err != nil {
@@ -103,10 +111,56 @@ func SetupStocks() {
 	fmt.Println("stocks updated")
 }
 
+func OpenMarket(c *cron.Cron, cronj string) {
+	c.AddFunc(cronj, func() {
+		MarketState = true
+		fmt.Println("The market is now OPEN")
+	})
+}
+
+func CloseMarket(c *cron.Cron, cronj string) {
+	c.AddFunc(cronj, func() {
+		MarketState = false
+		fmt.Println("The market is now CLOSED")
+	})
+}
+
 func SetupStocksCron() {
-	c := cron.New()
-	c.AddFunc("@every 1m", SetupStocks)
-	c.Start()
+	MarketState = true
+	SetupStocks() // always grab stocks when market is open, immediately recycle (conditional below)
+	if time.Now().Hour() > 0 && time.Now().Hour() < 8 {
+		MarketState = false
+		fmt.Println("The market is now CLOSED")
+	} else {
+		MarketState = true
+		fmt.Println("The market is now OPEN")
+	}
+	stateCron := cron.New()
+	apiCron := cron.New()
+
+	OpenMarket(stateCron, "0 8 * * 1-5") // Standard Market Opening
+	CloseMarket(stateCron, "0 0 * * 1-5") // Standard Market Closing
+
+	CloseMarket(stateCron, "* 17 3 7 *") // July 3rd Market Close
+	CloseMarket(stateCron, "* 17 28 11 *") // Black Friday Market Close
+	CloseMarket(stateCron, "* 17 24 12 *") // Christmas Eve Market Close
+
+	CloseMarket(stateCron, "* 4 1,9,20 1 *") // January Holidays
+	CloseMarket(stateCron, "* 4 17 2 *") // President's Day
+	CloseMarket(stateCron, "* 4 18 4 *") // Good Friday
+	CloseMarket(stateCron, "* 4 26 5 *") // Memorial Day
+	CloseMarket(stateCron, "* 4 19 6 *") // Juneteenth
+	CloseMarket(stateCron, "* 4 4 7 *") // Independence Day
+	CloseMarket(stateCron, "* 4 1 9 *") // Labor Day
+	CloseMarket(stateCron, "* 4 27 11 *") // Thanksgiving
+	CloseMarket(stateCron, "* 4 25 12 *") // Christmas
+
+	apiCron.AddFunc("@every 1m", func() {
+		SetupStocks()
+	})
+
+	stateCron.Start()
+	apiCron.Start()
 }
 
 func GetStocks() []StockPrice {
