@@ -31,12 +31,11 @@ func GetLeaderboard(c *fiber.Ctx) error {
 		}
 	}
 
-	filteredUsers = filteredUsers[:10]
-
 	// sort users (array of model.User) by their value of i.Cash (where i is an individual iteration of model.User looped through)
 	sort.Slice(filteredUsers, func(i, j int) bool {
 		return (filteredUsers[j].Cash + filteredUsers[j].ValuateStocks()) < (filteredUsers[i].Cash + filteredUsers[i].ValuateStocks())
 	})
+filteredUsers = filteredUsers[:10]
 
 	for i, user := range filteredUsers {
 		leaderboard += fmt.Sprintf("<span class=\"number\">%d.</span> ", i+1)
