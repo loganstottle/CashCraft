@@ -15,8 +15,9 @@ import (
 )
 
 // To eventually be changed to allow like - the S&P 500 - or any one on the NYSE stock exchange
-var ValidStocks = []string{"AAPL", "TSLA", "GOOG", "AMZN", "NVDA", "MSFT", "META", "COST", "DIS", "NFLX", "PLTR", "WMT", "V", "MA", "KO", "MCD", "PEP", "ADBE"}                                                                 // Stocks accepted for everything
-var ValidStocksNames = []string{"Apple", "Tesla", "Google", "Amazon", "Nvidia", "Microsoft", "Meta", "Costco", "Disney", "Netflix", "Palantir", "Walmart", "Visa", "Mastercard", "Coca-Cola", "McDonald's", "PepsiCo", "Adobe"} // The names of those stocks
+
+var ValidStocks = []string{"AAPL", "TSLA", "GOOG", "AMZN", "NVDA", "MSFT", "META", "COST", "DIS", "NFLX", "PLTR", "WMT", "V", "MA", "KO", "MCD", "PEP", "ADBE", "LMT"}                                                                      // Stocks accepted for everything
+var ValidStocksNames = []string{"Apple", "Tesla", "Google", "Amazon", "Nvidia", "Microsoft", "Meta", "Costco", "Disney", "Netflix", "Palantir", "Walmart", "Visa", "Mastercard", "Coca-Cola", "McDonald's", "PepsiCo", "Adobe", "Lockheed"} // The names of those stocks
 
 type StockQuote struct { // a struct that holds the current price for a stock
 	Change        float64 `json:"d"`
@@ -137,22 +138,22 @@ func SetupStocksCron() {
 	apiCron := cron.New()
 
 	// TODO: redo crons for non-daylight savings
-	OpenMarket(stateCron, "0 8 * * 1-5") // Standard Market Opening
+	OpenMarket(stateCron, "0 8 * * 1-5")  // Standard Market Opening
 	CloseMarket(stateCron, "0 0 * * 1-5") // Standard Market Closing
 
-	CloseMarket(stateCron, "* 17 3 7 *") // July 3rd Market Close
+	CloseMarket(stateCron, "* 17 3 7 *")   // July 3rd Market Close
 	CloseMarket(stateCron, "* 17 28 11 *") // Black Friday Market Close
 	CloseMarket(stateCron, "* 17 24 12 *") // Christmas Eve Market Close
 
 	CloseMarket(stateCron, "* 4 1,9,20 1 *") // January Holidays
-	CloseMarket(stateCron, "* 4 17 2 *") // President's Day
-	CloseMarket(stateCron, "* 4 18 4 *") // Good Friday
-	CloseMarket(stateCron, "* 4 26 5 *") // Memorial Day
-	CloseMarket(stateCron, "* 4 19 6 *") // Juneteenth
-	CloseMarket(stateCron, "* 4 4 7 *") // Independence Day
-	CloseMarket(stateCron, "* 4 1 9 *") // Labor Day
-	CloseMarket(stateCron, "* 4 27 11 *") // Thanksgiving
-	CloseMarket(stateCron, "* 4 25 12 *") // Christmas
+	CloseMarket(stateCron, "* 4 17 2 *")     // President's Day
+	CloseMarket(stateCron, "* 4 18 4 *")     // Good Friday
+	CloseMarket(stateCron, "* 4 26 5 *")     // Memorial Day
+	CloseMarket(stateCron, "* 4 19 6 *")     // Juneteenth
+	CloseMarket(stateCron, "* 4 4 7 *")      // Independence Day
+	CloseMarket(stateCron, "* 4 1 9 *")      // Labor Day
+	CloseMarket(stateCron, "* 4 27 11 *")    // Thanksgiving
+	CloseMarket(stateCron, "* 4 25 12 *")    // Christmas
 
 	apiCron.AddFunc("@every 1m", func() {
 		SetupStocks()

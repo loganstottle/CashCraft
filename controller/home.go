@@ -12,6 +12,10 @@ import (
 func FormatBalance(amount float64) string {
 	var result string
 	balance_str := fmt.Sprintf("%.2f", amount)
+	// <<<<<<< HEAD
+
+	// =======
+	// >>>>>>> 35e13ebcd09545d598d5fd7ec6f4b76e7ccae19d
 	if amount < 1000 {
 		return "$" + balance_str // If you don't have one thousand dollar, commas are not needed
 	}
@@ -39,6 +43,7 @@ func GetHome(c *fiber.Ctx) error {
 		return c.Redirect("/login")
 	}
 
+	// This code is used to calculate the net worth of the user
 	cashBalance := user.Cash
 	netWorth := cashBalance + user.ValuateStocks()
 
