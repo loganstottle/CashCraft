@@ -122,6 +122,10 @@ body {
     background: #f22;
 }
 
+.grey {
+    background: #333;
+}
+
 .btns-container {
     display: inline-block;
     position: absolute;

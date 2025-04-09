@@ -63,29 +63,28 @@ func GetHome(c *fiber.Ctx) error {
 			}
 		}
 
-		if model.MarketState == false {
-			stocksData += fmt.Sprintf("<span style=\"color: #666; font-weight: bold;\">%s</span> ", FormatBalance(stockPrice.Value))
-		} else if stockPrice.Up() {
-			stocksData += fmt.Sprintf("<span style=\"color: #2e2; font-weight: bold;\">%s</span> ", FormatBalance(stockPrice.Value))
+		if model.MarketState == true {
+			myStockData += fmt.Sprintf(" <div class=\"btns-container\"><button id=\"buy-%s\" class=\"buy\">Buy</button> <button id=\"sell-%s\" class=\"sell\">Sell</button></div><br></div>", stockPrice.Symbol, stockPrice.Symbol)
+			stocksData += fmt.Sprintf("<strong>%s (%s)</strong> <span style=\"color: #666\">-</span> ", stockPrice.Name, stockPrice.Symbol)
+
+			if stockPrice.Up() {
+				stocksData += fmt.Sprintf("<span style=\"color: #2e2; font-weight: bold;\">%s</span> ", FormatBalance(stockPrice.Value))
+			} else {
+				stocksData += fmt.Sprintf("<span style=\"color: #f22; font-weight: bold;\">%s</span> ", FormatBalance(stockPrice.Value))
+			}
+
+			stocksData += fmt.Sprintf("<span style=\"color: #666\">(%s)</span><br>", stockPrice.GenerateStatusString())
 		} else {
-			stocksData += fmt.Sprintf("<span style=\"color: #f22; font-weight: bold;\">%s</span> ", FormatBalance(stockPrice.Value))
+			myStockData += fmt.Sprintf(" <div class=\"btns-container\"><button id=\"buy-%s\" class=\"grey\">Buy</button> <button id=\"sell-%s\" class=\"grey\">Sell</button></div><br></div>", stockPrice.Symbol, stockPrice.Symbol)
+			stocksData += fmt.Sprintf("<strong style=\"color: #444\">%s (%s)</strong> <span style=\"color: #666\">-</span> ", stockPrice.Name, stockPrice.Symbol)
+			stocksData += fmt.Sprintf("<span style=\"color: #666; font-weight: bold;\">%s</span><br>", FormatBalance(stockPrice.Value))
 		}
 
-		myStockData += fmt.Sprintf(" <div class=\"btns-container\"><button id=\"buy-%s\" class=\"buy\">Buy</button> <button id=\"sell-%s\" class=\"sell\">Sell</button></div><br></div>", stockPrice.Symbol, stockPrice.Symbol)
-		stocksData += fmt.Sprintf("<strong>%s (%s)</strong> <span style=\"color: #666\">-</span> ", stockPrice.Name, stockPrice.Symbol)
-
-		if stockPrice.Up() {
-			stocksData += fmt.Sprintf("<span style=\"color: #2e2; font-weight: bold;\">%s</span> ", FormatBalance(stockPrice.Value))
-		} else {
-			stocksData += fmt.Sprintf("<span style=\"color: #f22; font-weight: bold;\">%s</span> ", FormatBalance(stockPrice.Value))
-		}
-
-		stocksData += fmt.Sprintf("<span style=\"color: #666\">(%s)</span><br>", stockPrice.GenerateStatusString())
 	} // This turns the stock data into a string - because we had issues with go templates
 
 	marketState := ""
 	if model.MarketState == false {
-		marketState = "(Market is closed)"
+		marketState = "(market is closed)"
 	}
 
 	return c.Render("home/index", fiber.Map{ // Data that we feed into the home page
