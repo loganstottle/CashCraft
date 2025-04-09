@@ -81,9 +81,7 @@ func (sp *StockPrice) Up() bool {
 func (sp *StockPrice) GenerateStatusString() string {
 	var emoji string
 
-	if MarketState == false {
-		emoji = ""
-	} else if sp.Up() {
+	if sp.Up() {
 		emoji = "📈"
 	} else {
 		emoji = "📉"
