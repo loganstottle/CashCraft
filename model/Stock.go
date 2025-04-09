@@ -34,9 +34,10 @@ type StockPrice struct { // a struct that holds the stocks symbol, name, and cos
 
 type Stock struct { // We have owner id to tie who owns each one
 	gorm.Model
-	Symbol  string
-	Amount  float64 `json:"amount"`
-	OwnerID uint
+	Symbol    string
+	Amount    float64 `json:"amount"`
+	NetEarned float64
+	OwnerID   uint
 }
 
 func (s *StockPrice) UpdatePrice() error { // API call with lots of error checking to update price of the stock passed into it

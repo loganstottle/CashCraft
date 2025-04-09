@@ -29,13 +29,17 @@ func (u *User) ValuateStocks() float64 {
 	return value
 }
 
-func (u *User) GetStock(symbol string) float64 {
+func (u *User) GetStock(symbol string) Stock {
 	stock := Stock{}
 	if err := DB.First(&stock, "owner_id = ? and symbol = ?", u.ID, symbol).Error; err != nil {
-		return 0
+		stock.Symbol = symbol
+		stock.Amount = 0
+		stock.NetEarned = 0
+		stock.OwnerID = u.ID
+		return stock
 	}
 
-	return stock.Amount
+	return stock
 }
 
 func (u *User) Buy(stockSymbol string, dollars float64) error {
@@ -58,13 +62,16 @@ func (u *User) Buy(stockSymbol string, dollars float64) error {
 	stock := Stock{}
 	if err := DB.First(&stock, "owner_id = ? AND symbol = ?", u.ID, stockSymbol).Error; err != nil {
 		stock = Stock{
-			Symbol:  stockSymbol,
-			Amount:  dollars / sp.Value,
-			OwnerID: u.ID,
+			Symbol:    stockSymbol,
+			Amount:    dollars / sp.Value,
+			OwnerID:   u.ID,
+			NetEarned: 0,
 		}
 	} else {
 		stock.Amount += dollars / sp.Value
 	}
+
+	stock.NetEarned -= dollars
 
 	DB.Save(&stock)
 	DB.Save(u)
@@ -100,11 +107,33 @@ func (u *User) Sell(stockSymbol string, stockAmount float64) error {
 
 	stockAmount = min(stockAmount, stock.Amount)
 
+	stock.NetEarned += stockAmount * sp.Value
 	u.Cash += stockAmount * sp.Value
 	stock.Amount -= stockAmount
-	DB.Save(&stock)
 
+	// if stock.Amount == 0 {
+	// 	stock.NetEarned = 0
+	// }
+
+	DB.Save(&stock)
 	DB.Save(u)
 
 	return nil
+}
+
+func (u *User) Profit(symbol string) float64 {
+	stock := u.GetStock(symbol)
+
+	if stock.NetEarned == 0 && stock.Amount > 0 {
+		stock.NetEarned = -stock.Amount
+		DB.Save(&stock)
+	}
+
+	sp := StockPrice{}
+	if err := DB.First(&sp, "symbol = ?", symbol).Error; err != nil {
+		fmt.Printf("Could not get sock price %s: %s\n", symbol, err)
+		return 0
+	}
+
+	return stock.Amount*sp.Value + stock.NetEarned
 }

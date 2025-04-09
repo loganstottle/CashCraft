@@ -3,6 +3,7 @@ package controller
 import (
 	"CashCraft/model"
 	"html/template"
+	"math"
 
 	"github.com/gofiber/fiber/v2"
 	//"strconv"
@@ -46,17 +47,31 @@ func GetHome(c *fiber.Ctx) error {
 	var stocksData string
 
 	//todo: templates (different engine may have fixed it)
-	for _, stock := range model.GetStocks() {
-		myStockData += fmt.Sprintf("<div class=\"stock-info\"><strong>%s (%s)</strong> <span style=\"color: #666\">-</span> <span style=\"text-decoration: underline\">%.3f</span> shares <span style=\"color: #666\">(%s)</span> <div class=\"btns-container\"><button id=\"buy-%s\" class=\"buy\">Buy</button> <button id=\"sell-%s\" class=\"sell\">Sell</button></div><br></div>", stock.Name, stock.Symbol, user.GetStock(stock.Symbol), FormatBalance(stock.Value*user.GetStock(stock.Symbol)), stock.Symbol, stock.Symbol)
-		stocksData += fmt.Sprintf("<strong>%s (%s)</strong> <span style=\"color: #666\">-</span> ", stock.Name, stock.Symbol)
+	for _, stockPrice := range model.GetStocks() {
+		myStock := user.GetStock(stockPrice.Symbol)
 
-		if stock.Up() {
-			stocksData += fmt.Sprintf("<span style=\"color: #2e2; font-weight: bold;\">%s</span> ", FormatBalance(stock.Value))
-		} else {
-			stocksData += fmt.Sprintf("<span style=\"color: #f22; font-weight: bold;\">%s</span> ", FormatBalance(stock.Value))
+		myStockData += fmt.Sprintf("<div class=\"stock-info\"><strong>%s (%s)</strong> <span style=\"color: #666\">-</span> <span style=\"text-decoration: underline\">%.3f</span> shares ", stockPrice.Name, stockPrice.Symbol, myStock.Amount)
+
+		if myStock.Amount > 0 {
+			if math.Abs(user.Profit(stockPrice.Symbol)) < 0.01 {
+				myStockData += fmt.Sprintf("<span style=\"color: #666\">(%s)</span>", FormatBalance(stockPrice.Value*myStock.Amount))
+			} else if user.Profit(stockPrice.Symbol) > 0 {
+				myStockData += fmt.Sprintf("<span style=\"color: #666\">(%s</span> <span style=\"color: #2e2\">+%s profit<span style=\"color: #666\">)</span>", FormatBalance(stockPrice.Value*myStock.Amount), FormatBalance(user.Profit(stockPrice.Symbol)))
+			} else {
+				myStockData += fmt.Sprintf("<span style=\"color: #666\">(%s</span> <span style=\"color: #f22\">-%s lost<span style=\"color: #666\">)</span>", FormatBalance(stockPrice.Value*myStock.Amount), FormatBalance(user.Profit(stockPrice.Symbol)))
+			}
 		}
 
-		stocksData += fmt.Sprintf("<span style=\"color: #666\">(%s)</span><br>", stock.GenerateStatusString())
+		myStockData += fmt.Sprintf(" <div class=\"btns-container\"><button id=\"buy-%s\" class=\"buy\">Buy</button> <button id=\"sell-%s\" class=\"sell\">Sell</button></div><br></div>", stockPrice.Symbol, stockPrice.Symbol)
+		stocksData += fmt.Sprintf("<strong>%s (%s)</strong> <span style=\"color: #666\">-</span> ", stockPrice.Name, stockPrice.Symbol)
+
+		if stockPrice.Up() {
+			stocksData += fmt.Sprintf("<span style=\"color: #2e2; font-weight: bold;\">%s</span> ", FormatBalance(stockPrice.Value))
+		} else {
+			stocksData += fmt.Sprintf("<span style=\"color: #f22; font-weight: bold;\">%s</span> ", FormatBalance(stockPrice.Value))
+		}
+
+		stocksData += fmt.Sprintf("<span style=\"color: #666\">(%s)</span><br>", stockPrice.GenerateStatusString())
 	} // This turns the stock data into a string - because we had issues with go templates
 
 	return c.Render("home/index", fiber.Map{ // Data that we feed into the home page
