@@ -124,15 +124,15 @@ func (u *User) Sell(stockSymbol string, stockAmount float64) error {
 func (u *User) Profit(symbol string) float64 {
 	stock := u.GetStock(symbol)
 
-	if stock.NetEarned == 0 && stock.Amount > 0 {
-		stock.NetEarned = -stock.Amount
-		DB.Save(&stock)
-	}
-
 	sp := StockPrice{}
 	if err := DB.First(&sp, "symbol = ?", symbol).Error; err != nil {
 		fmt.Printf("Could not get sock price %s: %s\n", symbol, err)
 		return 0
+	}
+
+	if stock.NetEarned == 0 && stock.Amount > 0 {
+		stock.NetEarned = -stock.Amount * sp.Value
+		DB.Save(&stock)
 	}
 
 	return stock.Amount*sp.Value + stock.NetEarned
