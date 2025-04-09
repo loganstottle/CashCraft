@@ -61,12 +61,14 @@ func GetHome(c *fiber.Ctx) error {
 			} else {
 				myStockData += fmt.Sprintf("<span style=\"color: #666\">(%s</span> <span style=\"color: #f22\">-%s lost<span style=\"color: #666\">)</span>", FormatBalance(stockPrice.Value*myStock.Amount), FormatBalance(user.Profit(stockPrice.Symbol)))
 			}
+		}
+
 		if model.MarketState == false {
-			stocksData += fmt.Sprintf("<span style=\"color: #666; font-weight: bold;\">%s</span> ", FormatBalance(stock.Value))
-		} else if stock.Up() {
-			stocksData += fmt.Sprintf("<span style=\"color: #2e2; font-weight: bold;\">%s</span> ", FormatBalance(stock.Value))
+			stocksData += fmt.Sprintf("<span style=\"color: #666; font-weight: bold;\">%s</span> ", FormatBalance(stockPrice.Value))
+		} else if stockPrice.Up() {
+			stocksData += fmt.Sprintf("<span style=\"color: #2e2; font-weight: bold;\">%s</span> ", FormatBalance(stockPrice.Value))
 		} else {
-			stocksData += fmt.Sprintf("<span style=\"color: #f22; font-weight: bold;\">%s</span> ", FormatBalance(stock.Value))
+			stocksData += fmt.Sprintf("<span style=\"color: #f22; font-weight: bold;\">%s</span> ", FormatBalance(stockPrice.Value))
 		}
 
 		myStockData += fmt.Sprintf(" <div class=\"btns-container\"><button id=\"buy-%s\" class=\"buy\">Buy</button> <button id=\"sell-%s\" class=\"sell\">Sell</button></div><br></div>", stockPrice.Symbol, stockPrice.Symbol)
