@@ -128,7 +128,8 @@ func CloseMarket(c *cron.Cron, cronj string) {
 func SetupStocksCron() {
 	MarketState = true
 	SetupStocks() // always grab stocks when market is open, immediately recycle (conditional below)
-	if time.Now().Hour() > 0 && time.Now().Hour() < 8 {
+	fmt.Println(time.Now().Hour())
+	if time.Now().Hour() >= 0 && time.Now().Hour() < 8 {
 		MarketState = false
 		fmt.Println("The market is now CLOSED")
 	} else {
