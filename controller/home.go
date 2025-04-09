@@ -40,6 +40,7 @@ func GetHome(c *fiber.Ctx) error {
 		return c.Redirect("/login")
 	}
 
+	// This code is used to calculate the net worth of the user
 	cashBalance := user.Cash
 	netWorth := cashBalance + user.ValuateStocks()
 
@@ -60,6 +61,12 @@ func GetHome(c *fiber.Ctx) error {
 			} else {
 				myStockData += fmt.Sprintf("<span style=\"color: #666\">(%s</span> <span style=\"color: #f22\">-%s lost<span style=\"color: #666\">)</span>", FormatBalance(stockPrice.Value*myStock.Amount), FormatBalance(user.Profit(stockPrice.Symbol)))
 			}
+		if model.MarketState == false {
+			stocksData += fmt.Sprintf("<span style=\"color: #666; font-weight: bold;\">%s</span> ", FormatBalance(stock.Value))
+		} else if stock.Up() {
+			stocksData += fmt.Sprintf("<span style=\"color: #2e2; font-weight: bold;\">%s</span> ", FormatBalance(stock.Value))
+		} else {
+			stocksData += fmt.Sprintf("<span style=\"color: #f22; font-weight: bold;\">%s</span> ", FormatBalance(stock.Value))
 		}
 
 		myStockData += fmt.Sprintf(" <div class=\"btns-container\"><button id=\"buy-%s\" class=\"buy\">Buy</button> <button id=\"sell-%s\" class=\"sell\">Sell</button></div><br></div>", stockPrice.Symbol, stockPrice.Symbol)
@@ -74,11 +81,17 @@ func GetHome(c *fiber.Ctx) error {
 		stocksData += fmt.Sprintf("<span style=\"color: #666\">(%s)</span><br>", stockPrice.GenerateStatusString())
 	} // This turns the stock data into a string - because we had issues with go templates
 
+	marketState := ""
+	if model.MarketState == false {
+		marketState = "(Market is closed)"
+	}
+
 	return c.Render("home/index", fiber.Map{ // Data that we feed into the home page
 		"Username":    user.Username,
 		"NetWorth":    FormatBalance(netWorth),
 		"CashBalance": FormatBalance(cashBalance),
 		"StocksData":  template.HTML(stocksData),
 		"MyStocks":    template.HTML(myStockData),
+		"MarketState": marketState,
 	})
 }
