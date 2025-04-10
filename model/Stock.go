@@ -129,7 +129,7 @@ func SetupStocksCron() {
 	MarketState = true
 	SetupStocks() // always grab stocks when market is open, immediately recycle (conditional below)
 	fmt.Println(time.Now().Hour())
-	if time.Now().Hour() >= 0 && time.Now().Hour() < 8 {
+	if time.Now().Hour() >= 20 || time.Now().Hour() < 11 || (time.Now().Hour() == 11 && time.Now().Minute() < 30) {
 		MarketState = false
 		fmt.Println("The market is now CLOSED")
 	} else {
@@ -140,8 +140,8 @@ func SetupStocksCron() {
 	apiCron := cron.New()
 
 	// TODO: redo crons for non-daylight savings
-	OpenMarket(stateCron, "0 8 * * 1-5")  // Standard Market Opening
-	CloseMarket(stateCron, "0 0 * * 1-5") // Standard Market Closing
+	OpenMarket(stateCron, "30 11 * * 1-5")  // Standard Market Opening
+	CloseMarket(stateCron, "0 20 * * 1-5") // Standard Market Closing
 
 	CloseMarket(stateCron, "* 17 3 7 *")   // July 3rd Market Close
 	CloseMarket(stateCron, "* 17 28 11 *") // Black Friday Market Close
